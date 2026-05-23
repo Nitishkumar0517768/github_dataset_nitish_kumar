@@ -14,6 +14,27 @@ router.patch('/bulk-update', datasetController.bulkUpdateDatasets);
 router.delete('/bulk-delete', datasetController.bulkDeleteDatasets);
 router.get('/check/:id', datasetController.checkDatasetExistence);
 
+// Static Filter Routes (Must be before generic route parameters like :id)
+router.get('/readme', datasetController.getReadmeDatasets);
+router.get('/functions', datasetController.getFunctionDatasets);
+router.get('/classes', datasetController.getClassDatasets);
+router.get('/documentation', datasetController.getDocumentationDatasets);
+router.get('/github', datasetController.getGithubDatasets);
+router.get('/python', datasetController.getPythonDatasets);
+router.get('/ml', datasetController.getMLDatasets);
+router.get('/ai', datasetController.getAIDatasets);
+router.get('/code-generation', datasetController.getCodeGenerationDatasets);
+router.get('/docstrings', datasetController.getDocstringDatasets);
+
+// Dynamic Parameter-based Filter Routes
+router.get('/type/:type', datasetController.getDatasetsByType);
+router.get('/repo/*', datasetController.getDatasetsByRepo); // Wildcard matches slashes in repo names (e.g. ultralytics/yolov5)
+router.get('/source/:source', datasetController.getDatasetsBySource);
+router.get('/doc/:docType', datasetController.getDatasetsByDocType);
+router.get('/doc-type/:docType', datasetController.getDatasetsByDocType);
+router.get('/code/:element', datasetController.getDatasetsByCodeElement);
+router.get('/code-element/:element', datasetController.getDatasetsByCodeElement);
+
 router.route('/:id')
   .get(datasetController.getDatasetById)
   .put(datasetController.updateDataset)
