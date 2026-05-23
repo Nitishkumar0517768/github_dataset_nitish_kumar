@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const datasetRouter = require('./routes/datasetRoutes');
+const searchRouter = require('./routes/searchRoutes');
 
 // Load environment variables
 dotenv.config({ path: './.env' });
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 
 // Mount Routes (Good to Have 13: Versioned API structure)
 app.use('/api/v1/datasets', datasetRouter);
+app.use('/api/v1/search', searchRouter);
 
 // Health Check API (Good to Have 15)
 app.get('/api/v1/system/health', (req, res) => {

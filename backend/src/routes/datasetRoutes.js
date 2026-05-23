@@ -26,6 +26,18 @@ router.get('/ai', datasetController.getAIDatasets);
 router.get('/code-generation', datasetController.getCodeGenerationDatasets);
 router.get('/docstrings', datasetController.getDocstringDatasets);
 
+// Hardcoded Filter Endpoints (GET /datasets/filter/...)
+router.get('/filter/readme', datasetController.getReadmeDatasets);
+router.get('/filter/functions', datasetController.getFunctionDatasets);
+router.get('/filter/classes', datasetController.getClassDatasets);
+router.get('/filter/documentation', datasetController.getDocumentationDatasets);
+router.get('/filter/github', datasetController.getGithubDatasets);
+router.get('/filter/python', datasetController.getPythonDatasets);
+router.get('/filter/ml', datasetController.getMLDatasets);
+router.get('/filter/ai', datasetController.getAIDatasets);
+router.get('/filter/frameworks', datasetController.getAIDatasets);
+router.get('/filter/docstrings', datasetController.getDocstringDatasets);
+
 // Specialized Sorting Routes (Must be before generic route parameters to avoid collisions)
 router.get('/sort/recent', datasetController.sortRecentDatasets);
 router.get('/sort/name', datasetController.sortAlphabeticalDatasets);
