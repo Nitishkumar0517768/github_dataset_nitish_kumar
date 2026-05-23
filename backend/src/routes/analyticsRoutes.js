@@ -1,7 +1,11 @@
 const express = require('express');
 const analyticsController = require('../controllers/analyticsController');
+const { protect, restrictTo } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
+
+// Admin analytics route (Route 161)
+router.get('/admin/analytics', protect, restrictTo('admin'), analyticsController.getTypeAnalysis);
 
 // Define analytics routes matching: GET /api/v1/analytics/datasets/...
 router.get('/datasets/type-analysis', analyticsController.getTypeAnalysis);

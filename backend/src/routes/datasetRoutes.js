@@ -1,5 +1,6 @@
 const express = require('express');
 const datasetController = require('../controllers/datasetController');
+const { protect, restrictTo } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -7,6 +8,12 @@ const router = express.Router();
 router.route('/')
   .get(datasetController.getAllDatasets)
   .post(datasetController.createDataset);
+
+// Admin and Protected API mappings (Route 160-164)
+router.get('/admin/datasets', protect, restrictTo('admin'), datasetController.getAllDatasets);
+router.post('/protected/datasets', protect, datasetController.createDataset);
+router.patch('/protected/datasets/:id', protect, datasetController.updateDataset);
+router.delete('/protected/datasets/:id', protect, datasetController.deleteDataset);
 
 // Bulk CRUD and check endpoints (placed before parameter routes to avoid collisions)
 router.post('/bulk-create', datasetController.bulkCreateDatasets);

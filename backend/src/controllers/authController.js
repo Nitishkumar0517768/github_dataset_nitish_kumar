@@ -83,3 +83,167 @@ exports.logout = catchAsync(async (req, res, next) => {
     message: 'User logged out successfully'
   });
 });
+
+// GET Profile
+exports.getProfile = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    success: true,
+    message: 'Profile retrieved successfully',
+    data: { user }
+  });
+});
+
+// PATCH Profile
+exports.updateProfile = catchAsync(async (req, res, next) => {
+  const { name, email } = req.body;
+  const user = await User.findById(req.user.id);
+
+  if (name) user.name = name;
+  if (email) {
+    const existing = await User.findOne({ email });
+    if (existing && existing.id !== user.id) {
+      return next(new AppError('Email address is already in use by another user', 400));
+    }
+    user.email = email;
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Profile updated successfully',
+    data: { user }
+  });
+});
+
+// POST Forgot Password (OTP Generation Mock)
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) return next(new AppError('Please provide an email address', 400));
+
+  const user = await User.findOne({ email });
+  if (!user) return next(new AppError('No user found with that email address', 404));
+
+  // Generate OTP (Good to Have 18: OTP verification setup)
+  const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit OTP
+  user.emailVerificationOTP = otp;
+  user.emailVerificationOTPExpires = Date.now() + 10 * 60 * 1000; // 10 mins expiry
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Password reset OTP verification code sent successfully (mocked)',
+    data: { otp } // Send in payload for testing/ease of use
+  });
+});
+
+// POST Reset Password
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { email, otp, newPassword } = req.body;
+  if (!email || !otp || !newPassword) {
+    return next(new AppError('Please provide email, OTP code, and newPassword', 400));
+  }
+
+  const user = await User.findOne({
+    email,
+    emailVerificationOTP: otp,
+    emailVerificationOTPExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new AppError('Invalid OTP code or email, or code expired', 400));
+  }
+
+  user.password = newPassword;
+  user.emailVerificationOTP = undefined;
+  user.emailVerificationOTPExpires = undefined;
+
+  await user.save();
+
+  createSendToken(user, 200, res, 'Password reset successfully');
+});
+
+// POST Change Password
+exports.changePassword = catchAsync(async (req, res, next) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return next(new AppError('Please provide currentPassword and newPassword', 400));
+  }
+
+  const user = await User.findById(req.user.id).select('+password');
+  if (!(await user.correctPassword(currentPassword, user.password))) {
+    return next(new AppError('Incorrect current password', 401));
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  createSendToken(user, 200, res, 'Password changed successfully');
+});
+
+// POST Send OTP
+exports.sendOTP = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) return next(new AppError('Provide email', 400));
+
+  const user = await User.findOne({ email });
+  if (!user) return next(new AppError('No user found', 404));
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  user.emailVerificationOTP = otp;
+  user.emailVerificationOTPExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+
+  res.status(200).json({ success: true, message: 'OTP sent', data: { otp } });
+});
+
+// POST Verify Email
+exports.verifyEmail = catchAsync(async (req, res, next) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return next(new AppError('Provide email and OTP', 400));
+
+  const user = await User.findOne({
+    email,
+    emailVerificationOTP: otp,
+    emailVerificationOTPExpires: { $gt: Date.now() }
+  });
+
+  if (!user) return next(new AppError('Invalid or expired OTP', 400));
+
+  user.isEmailVerified = true;
+  user.emailVerificationOTP = undefined;
+  user.emailVerificationOTPExpires = undefined;
+  await user.save();
+
+  res.status(200).json({ success: true, message: 'Email verified successfully' });
+});
+
+// JWT Verification Controllers (Route 184-189)
+exports.generateToken = catchAsync(async (req, res, next) => {
+  const { userId } = req.body;
+  if (!userId) return next(new AppError('Provide userId', 400));
+  const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.status(200).json({ success: true, token });
+});
+
+exports.verifyToken = catchAsync(async (req, res, next) => {
+  const { token } = req.body;
+  if (!token) return next(new AppError('Provide token', 400));
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  res.status(200).json({ success: true, decoded });
+});
+
+exports.refreshToken = catchAsync(async (req, res, next) => {
+  const { token } = req.body;
+  if (!token) return next(new AppError('Provide token', 400));
+  const decoded = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+  const newToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.status(200).json({ success: true, token: newToken });
+});
+
+exports.revokeToken = catchAsync(async (req, res, next) => {
+  res.status(200).json({ success: true, message: 'Token revoked successfully (mocked)' });
+});
+
