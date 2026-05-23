@@ -136,3 +136,242 @@ exports.deleteDataset = catchAsync(async (req, res, next) => {
 
   sendSuccess(res, 200, null, 'Dataset deleted successfully (soft delete)');
 });
+
+// POST Bulk Create Datasets
+exports.bulkCreateDatasets = catchAsync(async (req, res, next) => {
+  const datasets = Array.isArray(req.body) ? req.body : req.body.datasets;
+
+  if (!datasets || !Array.isArray(datasets) || datasets.length === 0) {
+    return next(new AppError('Please provide an array of dataset records', 400));
+  }
+
+  // Pre-validate that all records have required fields
+  for (const item of datasets) {
+    if (!item.id || !item.instruction || !item.output || !item.metadata) {
+      return next(new AppError(`Record with ID ${item.id || 'unknown'} is missing required fields`, 400));
+    }
+    item.isDeleted = false;
+  }
+
+  const createdDocs = await Dataset.insertMany(datasets);
+  sendSuccess(res, 210, createdDocs, `${createdDocs.length} datasets created successfully in bulk`);
+});
+
+// PATCH Bulk Update Datasets
+exports.bulkUpdateDatasets = catchAsync(async (req, res, next) => {
+  const { updates, filter, update } = req.body;
+
+  if (updates && Array.isArray(updates)) {
+    const bulkOps = updates.map(item => {
+      const { id, ...updateFields } = item;
+      return {
+        updateOne: {
+          filter: { id, isDeleted: { $ne: true } },
+          update: { $set: updateFields }
+        }
+      };
+    });
+
+    const result = await Dataset.bulkWrite(bulkOps);
+    return sendSuccess(res, 200, result, 'Bulk write operations completed successfully');
+  }
+
+  if (filter && update) {
+    const result = await Dataset.updateMany(
+      { ...filter, isDeleted: { $ne: true } },
+      { $set: update }
+    );
+    return sendSuccess(res, 200, result, 'Bulk update matching documents completed successfully');
+  }
+
+  return next(new AppError('Provide either an "updates" array or "filter" and "update" objects', 400));
+});
+
+// DELETE Bulk Delete Datasets (Soft delete)
+exports.bulkDeleteDatasets = catchAsync(async (req, res, next) => {
+  const ids = req.body.ids || req.query.ids;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return next(new AppError('Please provide an array of dataset IDs in "ids"', 400));
+  }
+
+  const result = await Dataset.updateMany(
+    { id: { $in: ids }, isDeleted: { $ne: true } },
+    { $set: { isDeleted: true } }
+  );
+
+  sendSuccess(res, 200, result, `${result.modifiedCount} datasets deleted successfully in bulk`);
+});
+
+// GET Check Dataset Existence
+exports.checkDatasetExistence = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  let exists = false;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    exists = await Dataset.exists({ _id: id, isDeleted: { $ne: true } });
+  } else {
+    exists = await Dataset.exists({ id: id, isDeleted: { $ne: true } });
+  }
+
+  res.status(200).json({
+    success: true,
+    exists: !!exists,
+    message: exists ? 'Dataset exists' : 'Dataset does not exist'
+  });
+});
+
+// Helper for fetching filtered query results with pagination (Good to Have 11: Reusable Pagination Utility)
+const fetchAndSendDatasets = async (req, res, filterQuery, successMsg) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 100;
+  const skip = (page - 1) * limit;
+
+  const datasets = await Dataset.find(filterQuery)
+    .skip(skip)
+    .limit(limit);
+
+  sendSuccess(res, 200, datasets, successMsg);
+};
+
+// GET Datasets by Type parameter
+exports.getDatasetsByType = catchAsync(async (req, res, next) => {
+  const { type } = req.params;
+  const query = { 'metadata.type': type, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, `Datasets of type '${type}' retrieved successfully`);
+});
+
+// GET Datasets by Repo parameter (handles slashes dynamically)
+exports.getDatasetsByRepo = catchAsync(async (req, res, next) => {
+  // Capture repo parameter which could be the full route matched by wildcard *
+  const repo = req.params.repo || req.params[0];
+  if (!repo) {
+    return next(new AppError('Repository parameter is missing', 400));
+  }
+  const query = { 'metadata.repo_name': repo, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, `Datasets for repository '${repo}' retrieved successfully`);
+});
+
+// GET Datasets by Source parameter
+exports.getDatasetsBySource = catchAsync(async (req, res, next) => {
+  const { source } = req.params;
+  const query = { 'metadata.source_type': source, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, `Datasets with source type '${source}' retrieved successfully`);
+});
+
+// GET Datasets by Doc Type parameter
+exports.getDatasetsByDocType = catchAsync(async (req, res, next) => {
+  const docType = req.params.docType || req.params.doc;
+  const query = { 'metadata.doc_type': docType, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, `Datasets with document type '${docType}' retrieved successfully`);
+});
+
+// GET Datasets by Code Element parameter
+exports.getDatasetsByCodeElement = catchAsync(async (req, res, next) => {
+  const element = req.params.element || req.params.code;
+  const query = { 'metadata.code_element': element, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, `Datasets with code element '${element}' retrieved successfully`);
+});
+
+// GET README based datasets
+exports.getReadmeDatasets = catchAsync(async (req, res, next) => {
+  const query = { 'metadata.is_readme': true, isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'README-based datasets retrieved successfully');
+});
+
+// GET Function implementation datasets
+exports.getFunctionDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.type': { $in: ['function', 'function_implementation'] } },
+      { 'metadata.code_element': 'function' }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'Function implementation datasets retrieved successfully');
+});
+
+// GET Class implementation datasets
+exports.getClassDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.type': { $in: ['class', 'class_implementation'] } },
+      { 'metadata.code_element': 'class' }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'Class implementation datasets retrieved successfully');
+});
+
+// GET Documentation datasets
+exports.getDocumentationDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.type': 'documentation' },
+      { 'metadata.doc_type': { $exists: true } }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'Documentation datasets retrieved successfully');
+});
+
+// GET GitHub repository datasets
+exports.getGithubDatasets = catchAsync(async (req, res, next) => {
+  const query = { 'metadata.source_type': 'github_repository', isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'GitHub repository datasets retrieved successfully');
+});
+
+// GET Python related datasets
+exports.getPythonDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.file_path': /\.py$/i },
+      { 'metadata.repo_name': /python/i }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'Python-related datasets retrieved successfully');
+});
+
+// GET Machine learning datasets
+exports.getMLDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.repo_name': /machine-learning|ml|classification|regression|scikit|sklearn|pandas|numpy/i },
+      { instruction: /machine learning|classification|regression|dataset|supervised|unsupervised/i },
+      { input: /machine learning|classification|regression|dataset|supervised|unsupervised/i }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'Machine learning datasets retrieved successfully');
+});
+
+// GET AI related datasets
+exports.getAIDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { 'metadata.repo_name': /transformers|huggingface|llm|gpt|openai|llama|deepseek|keras|pytorch|tensorflow|atomic-agents/i },
+      { instruction: /artificial intelligence|deep learning|neural network|llm|gpt|transformer|openai|ai/i },
+      { input: /artificial intelligence|deep learning|neural network|llm|gpt|transformer|openai|ai/i }
+    ]
+  };
+  await fetchAndSendDatasets(req, res, query, 'AI-related datasets retrieved successfully');
+});
+
+// GET Code generation datasets
+exports.getCodeGenerationDatasets = catchAsync(async (req, res, next) => {
+  const query = {
+    isDeleted: { $ne: true },
+    'metadata.type': { $in: ['function_implementation', 'class_implementation'] }
+  };
+  await fetchAndSendDatasets(req, res, query, 'Code generation datasets retrieved successfully');
+});
+
+// GET Docstring generation datasets
+exports.getDocstringDatasets = catchAsync(async (req, res, next) => {
+  const query = { 'metadata.type': 'docstring_generation', isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'Docstring generation datasets retrieved successfully');
+});
+
+
