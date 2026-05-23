@@ -526,5 +526,31 @@ exports.sortRepoDescDatasets = catchAsync(async (req, res, next) => {
   await fetchAndSendDatasets(req, res, query, 'Repositories sorted descending retrieved successfully', { 'metadata.repo_name': -1 });
 });
 
+// GET Search Datasets by keyword (Good to Have 9: Regex advanced search)
+exports.searchDatasets = catchAsync(async (req, res, next) => {
+  const keyword = req.query.q || req.query.search;
+
+  // Handle empty search query (Error Handling Route 201)
+  if (!keyword || keyword.trim() === '') {
+    return next(new AppError('Search query parameter "q" or "search" is required and cannot be empty', 400));
+  }
+
+  const regex = new RegExp(keyword, 'i');
+  
+  const query = {
+    isDeleted: { $ne: true },
+    $or: [
+      { id: regex },
+      { instruction: regex },
+      { input: regex },
+      { output: regex },
+      { 'metadata.repo_name': regex }
+    ]
+  };
+
+  await fetchAndSendDatasets(req, res, query, `Search results for keyword '${keyword}' retrieved successfully`);
+});
+
+
 
 
