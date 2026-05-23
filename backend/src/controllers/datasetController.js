@@ -2,6 +2,7 @@ const Dataset = require('../models/dataset');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 const buildFilters = require('../utils/filterBuilder');
+const getPagination = require('../utils/pagination');
 
 // Good to Have 1: API Response Standardization
 const sendSuccess = (res, statusCode, data, message = 'Success') => {
@@ -18,12 +19,31 @@ exports.getAllDatasets = catchAsync(async (req, res, next) => {
   // Good to Have 12: Build filters dynamically from query parameters
   const query = buildFilters(req.query);
   
-  // Simple pagination
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 100;
-  const skip = (page - 1) * limit;
+  // Good to Have 11: central pagination utility
+  const { skip, limit } = getPagination(req.query);
+
+  // Parse sorting query
+  let sortQuery = {};
+  if (req.query.sort) {
+    const isDesc = req.query.sort.startsWith('-');
+    const rawField = isDesc ? req.query.sort.substring(1) : req.query.sort;
+    
+    // Map sorting fields to nested schema structure
+    let field = rawField;
+    if (rawField === 'repo' || rawField === 'framework') field = 'metadata.repo_name';
+    else if (rawField === 'type') field = 'metadata.type';
+    else if (rawField === 'source') field = 'metadata.source_type';
+    else if (rawField === 'docType') field = 'metadata.doc_type';
+    else if (rawField === 'language') field = 'metadata.file_path';
+
+    sortQuery[field] = isDesc ? -1 : 1;
+  } else {
+    // Default sort by id
+    sortQuery['id'] = 1;
+  }
 
   const datasets = await Dataset.find(query)
+    .sort(sortQuery)
     .skip(skip)
     .limit(limit);
 
@@ -215,12 +235,11 @@ exports.checkDatasetExistence = catchAsync(async (req, res, next) => {
 });
 
 // Helper for fetching filtered query results with pagination (Good to Have 11: Reusable Pagination Utility)
-const fetchAndSendDatasets = async (req, res, filterQuery, successMsg) => {
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 100;
-  const skip = (page - 1) * limit;
+const fetchAndSendDatasets = async (req, res, filterQuery, successMsg, defaultSort = { id: 1 }) => {
+  const { skip, limit } = getPagination(req.query);
 
   const datasets = await Dataset.find(filterQuery)
+    .sort(defaultSort)
     .skip(skip)
     .limit(limit);
 
@@ -481,6 +500,30 @@ exports.getDatasetsByCategory = catchAsync(async (req, res, next) => {
   }
 
   await fetchAndSendDatasets(req, res, query, `Datasets matching category '${category}' retrieved successfully`);
+});
+
+// GET Sort datasets recently added (createdAt descending / _id descending)
+exports.sortRecentDatasets = catchAsync(async (req, res, next) => {
+  const query = { isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'Recently added datasets retrieved successfully', { _id: -1 });
+});
+
+// GET Sort datasets alphabetically by name (id ascending)
+exports.sortAlphabeticalDatasets = catchAsync(async (req, res, next) => {
+  const query = { isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'Alphabetically sorted datasets retrieved successfully', { id: 1 });
+});
+
+// GET Sort datasets descending by type
+exports.sortTypeDescDatasets = catchAsync(async (req, res, next) => {
+  const query = { isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'Datasets sorted descending by type retrieved successfully', { 'metadata.type': -1 });
+});
+
+// GET Sort repositories descending
+exports.sortRepoDescDatasets = catchAsync(async (req, res, next) => {
+  const query = { isDeleted: { $ne: true } };
+  await fetchAndSendDatasets(req, res, query, 'Repositories sorted descending retrieved successfully', { 'metadata.repo_name': -1 });
 });
 
 

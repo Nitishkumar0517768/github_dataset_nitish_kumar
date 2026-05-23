@@ -26,6 +26,12 @@ router.get('/ai', datasetController.getAIDatasets);
 router.get('/code-generation', datasetController.getCodeGenerationDatasets);
 router.get('/docstrings', datasetController.getDocstringDatasets);
 
+// Specialized Sorting Routes (Must be before generic route parameters to avoid collisions)
+router.get('/sort/recent', datasetController.sortRecentDatasets);
+router.get('/sort/name', datasetController.sortAlphabeticalDatasets);
+router.get('/sort/type-desc', datasetController.sortTypeDescDatasets);
+router.get('/sort/repo-desc', datasetController.sortRepoDescDatasets);
+
 // Dynamic Parameter-based Filter Routes
 router.get('/type/:type', datasetController.getDatasetsByType);
 router.get('/repo/*', datasetController.getDatasetsByRepo); // Wildcard matches slashes in repo names (e.g. ultralytics/yolov5)
