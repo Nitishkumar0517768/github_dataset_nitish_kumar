@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 const datasetRouter = require('./routes/datasetRoutes');
 const searchRouter = require('./routes/searchRoutes');
@@ -11,7 +12,8 @@ const authRouter = require('./routes/authRoutes');
 const jwtRouter = require('./routes/jwtRoutes');
 
 // Load environment variables
-dotenv.config({ path: './.env' });
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
 
 const { apiLimiter } = require('./middlewares/rateLimiter');
 
