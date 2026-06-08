@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import StatsDashboard from './pages/StatsDashboard';
+import DatasetsExplorer from './pages/DatasetsExplorer';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -75,7 +76,7 @@ function App() {
       {/* Dashboard Protected Layout Route */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<StatsDashboard />} />
-        <Route path="/explorer" element={<ExplorerPlaceholder />} />
+        <Route path="/explorer" element={<DatasetsExplorer />} />
         <Route path="/analytics" element={<AnalyticsPlaceholder />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsersPlaceholder /></AdminRoute>} />
