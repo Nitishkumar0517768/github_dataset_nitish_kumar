@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchDatasets, setPage, setLimit } from '../store/datasetSlice';
 import DatasetTableRow from '../components/DatasetTableRow';
 import DatasetDetailModal from '../components/DatasetDetailModal';
+import FilterSidebar from '../components/FilterSidebar';
 import { ChevronLeft, ChevronRight, HelpCircle, Layers, RefreshCw } from 'lucide-react';
 import { showNotification } from '../store/uiSlice';
 
@@ -93,208 +94,216 @@ const DatasetsExplorer = () => {
         </button>
       </div>
 
-      {/* Main Table Grid Card */}
-      <div className="bg-white dark:bg-dark-card border border-slate-200/60 dark:border-dark-border/60 rounded-3xl shadow-sm overflow-hidden flex flex-col justify-between">
+      {/* Main content grid split */}
+      <div className="flex flex-col lg:flex-row gap-6">
         
-        {/* Table Container */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 dark:border-dark-border bg-slate-50/50 dark:bg-slate-800/10">
-                <th className="px-6 py-4 w-12 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">
-                  <input
-                    type="checkbox"
-                    checked={items.length > 0 && selectedIds.length === items.length}
-                    onChange={handleSelectAllToggle}
-                    className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-brand-600 focus:ring-brand-500/20 outline-none transition-colors cursor-pointer"
-                  />
-                </th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">ID</th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Type</th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Repository</th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">File Path</th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Instruction Preview</th>
-                <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle text-right">Actions</th>
-              </tr>
-            </thead>
+        {/* Left Side: Filter Sidebar */}
+        <FilterSidebar />
 
-            <tbody className="divide-y divide-slate-100 dark:divide-dark-border/40">
-              {loading ? (
-                // Skeleton loading rows
-                Array.from({ length: limit }).map((_, index) => (
-                  <tr key={index} className="animate-pulse">
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-4 w-4 bg-slate-200 dark:bg-slate-800 rounded" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-20" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-32" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle">
-                      <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-60" />
-                    </td>
-                    <td className="px-6 py-4.5 align-middle text-right">
-                      <div className="flex justify-end gap-2">
-                        <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
-                        <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
-                        <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+        {/* Right Side: Main Table Grid */}
+        <div className="flex-1 bg-white dark:bg-dark-card border border-slate-200/60 dark:border-dark-border/60 rounded-3xl shadow-sm overflow-hidden flex flex-col justify-between">
+          
+          {/* Table Container */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-dark-border bg-slate-50/50 dark:bg-slate-800/10">
+                  <th className="px-6 py-4 w-12 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">
+                    <input
+                      type="checkbox"
+                      checked={items.length > 0 && selectedIds.length === items.length}
+                      onChange={handleSelectAllToggle}
+                      className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-brand-600 focus:ring-brand-500/20 outline-none transition-colors cursor-pointer"
+                    />
+                  </th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">ID</th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Type</th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Repository</th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">File Path</th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle">Instruction Preview</th>
+                  <th className="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase align-middle text-right">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-slate-100 dark:divide-dark-border/40">
+                {loading ? (
+                  // Skeleton loading rows
+                  Array.from({ length: limit }).map((_, index) => (
+                    <tr key={index} className="animate-pulse">
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-4 w-4 bg-slate-200 dark:bg-slate-800 rounded" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-16" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-20" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-32" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-60" />
+                      </td>
+                      <td className="px-6 py-4.5 align-middle text-right">
+                        <div className="flex justify-end gap-2">
+                          <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                          <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                          <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : items.length === 0 ? (
+                  // Empty state
+                  <tr>
+                    <td colSpan={7} className="px-6 py-16 text-center align-middle">
+                      <div className="max-w-md mx-auto space-y-3">
+                        <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto">
+                          <Layers className="w-6 h-6" />
+                        </div>
+                        <h3 className="text-lg font-bold">No Datasets Found</h3>
+                        <p className="text-sm text-slate-400">
+                          We couldn't find any dataset records matching your active filters.
+                        </p>
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : items.length === 0 ? (
-                // Empty state
-                <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center align-middle">
-                    <div className="max-w-md mx-auto space-y-3">
-                      <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto">
-                        <Layers className="w-6 h-6" />
-                      </div>
-                      <h3 className="text-lg font-bold">No Datasets Found</h3>
-                      <p className="text-sm text-slate-400">
-                        We couldn't find any dataset records. Try refreshing the inventory connection.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                items.map((dataset) => (
-                  <DatasetTableRow
-                    key={dataset.id || dataset._id}
-                    dataset={dataset}
-                    onView={handleViewDetail}
-                    onEdit={handleEditRecord}
-                    onDelete={handleDeleteRecord}
-                    isSelected={selectedIds.includes(dataset.id || dataset._id)}
-                    onSelectToggle={handleSelectToggle}
-                  />
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : (
+                  items.map((dataset) => (
+                    <DatasetTableRow
+                      key={dataset.id || dataset._id}
+                      dataset={dataset}
+                      onView={handleViewDetail}
+                      onEdit={handleEditRecord}
+                      onDelete={handleDeleteRecord}
+                      isSelected={selectedIds.includes(dataset.id || dataset._id)}
+                      onSelectToggle={handleSelectToggle}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Pagination Controls Section */}
-        {totalResults > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5 border-t border-slate-100 dark:border-dark-border">
-            {/* Show info */}
-            <div className="text-xs font-semibold text-slate-400">
-              Showing <span className="text-slate-600 dark:text-slate-300">{((page - 1) * limit) + 1}</span> to{' '}
-              <span className="text-slate-600 dark:text-slate-300">
-                {Math.min(page * limit, totalResults)}
-              </span>{' '}
-              of <span className="text-slate-600 dark:text-slate-300">{totalResults.toLocaleString()}</span> records
-            </div>
-
-            {/* Pagination controls & limits */}
-            <div className="flex items-center gap-4.5">
-              {/* Limit selector */}
-              <div className="flex items-center gap-2 text-xs font-semibold">
-                <span className="text-slate-400">Rows per page:</span>
-                <select
-                  value={limit}
-                  onChange={handleLimitChange}
-                  className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-dark-border rounded-lg outline-none text-slate-600 dark:text-slate-300 focus:border-brand-500"
-                >
-                  {[10, 25, 50, 100].map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
+          {/* Pagination Controls Section */}
+          {totalResults > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-5 border-t border-slate-100 dark:border-dark-border">
+              {/* Show info */}
+              <div className="text-xs font-semibold text-slate-400">
+                Showing <span className="text-slate-600 dark:text-slate-300">{((page - 1) * limit) + 1}</span> to{' '}
+                <span className="text-slate-600 dark:text-slate-300">
+                  {Math.min(page * limit, totalResults)}
+                </span>{' '}
+                of <span className="text-slate-600 dark:text-slate-300">{totalResults.toLocaleString()}</span> records
               </div>
 
-              {/* Prev/Next buttons */}
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 1 || loading}
-                  className="p-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 rounded-lg border border-slate-200/40 dark:border-dark-border/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {/* Page numbers indicators */}
-                <div className="flex items-center gap-1">
-                  {/* First Page */}
-                  {page > 2 && (
-                    <>
-                      <button
-                        onClick={() => handlePageChange(1)}
-                        className={`h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border transition-all ${
-                          page === 1
-                            ? 'bg-brand-600 text-white border-brand-600'
-                            : 'bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        1
-                      </button>
-                      {page > 3 && <span className="text-slate-400 text-xs px-0.5">...</span>}
-                    </>
-                  )}
-
-                  {/* Preceding Page */}
-                  {page > 1 && (
-                    <button
-                      onClick={() => handlePageChange(page - 1)}
-                      className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
-                    >
-                      {page - 1}
-                    </button>
-                  )}
-
-                  {/* Current Page */}
-                  <button
-                    className="h-7.5 w-7.5 text-xs font-bold rounded-lg flex items-center justify-center border bg-brand-600 text-white border-brand-600"
-                    disabled
+              {/* Pagination controls & limits */}
+              <div className="flex items-center gap-4.5">
+                {/* Limit selector */}
+                <div className="flex items-center gap-2 text-xs font-semibold">
+                  <span className="text-slate-400">Rows per page:</span>
+                  <select
+                    value={limit}
+                    onChange={handleLimitChange}
+                    className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-dark-border rounded-lg outline-none text-slate-600 dark:text-slate-300 focus:border-brand-500"
                   >
-                    {page}
-                  </button>
-
-                  {/* Succeeding Page */}
-                  {page < totalPages && (
-                    <button
-                      onClick={() => handlePageChange(page + 1)}
-                      className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
-                    >
-                      {page + 1}
-                    </button>
-                  )}
-
-                  {/* Last Page */}
-                  {page < totalPages - 1 && (
-                    <>
-                      {page < totalPages - 2 && <span className="text-slate-400 text-xs px-0.5">...</span>}
-                      <button
-                        onClick={() => handlePageChange(totalPages)}
-                        className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
-                      >
-                        {totalPages}
-                      </button>
-                    </>
-                  )}
+                    {[10, 25, 50, 100].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                <button
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page === totalPages || loading}
-                  className="p-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 rounded-lg border border-slate-200/40 dark:border-dark-border/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                {/* Prev/Next buttons */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1 || loading}
+                    className="p-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 rounded-lg border border-slate-200/40 dark:border-dark-border/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {/* Page numbers indicators */}
+                  <div className="flex items-center gap-1">
+                    {/* First Page */}
+                    {page > 2 && (
+                      <>
+                        <button
+                          onClick={() => handlePageChange(1)}
+                          className={`h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border transition-all ${
+                            page === 1
+                              ? 'bg-brand-600 text-white border-brand-600'
+                              : 'bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          1
+                        </button>
+                        {page > 3 && <span className="text-slate-400 text-xs px-0.5">...</span>}
+                      </>
+                    )}
+
+                    {/* Preceding Page */}
+                    {page > 1 && (
+                      <button
+                        onClick={() => handlePageChange(page - 1)}
+                        className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+                      >
+                        {page - 1}
+                      </button>
+                    )}
+
+                    {/* Current Page */}
+                    <button
+                      className="h-7.5 w-7.5 text-xs font-bold rounded-lg flex items-center justify-center border bg-brand-600 text-white border-brand-600"
+                      disabled
+                    >
+                      {page}
+                    </button>
+
+                    {/* Succeeding Page */}
+                    {page < totalPages && (
+                      <button
+                        onClick={() => handlePageChange(page + 1)}
+                        className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+                      >
+                        {page + 1}
+                      </button>
+                    )}
+
+                    {/* Last Page */}
+                    {page < totalPages - 1 && (
+                      <>
+                        {page < totalPages - 2 && <span className="text-slate-400 text-xs px-0.5">...</span>}
+                        <button
+                          onClick={() => handlePageChange(totalPages)}
+                          className="h-7.5 w-7.5 text-xs font-bold rounded-lg cursor-pointer flex items-center justify-center border bg-white dark:bg-dark-card border-slate-200/60 dark:border-dark-border/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50"
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages || loading}
+                    className="p-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 rounded-lg border border-slate-200/40 dark:border-dark-border/40 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+      
       {/* Detail slide-over drawer modal */}
       <DatasetDetailModal
         dataset={selectedDataset}
