@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -65,13 +68,15 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* Dashboard Protected Layout Route */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPlaceholder />} />
         <Route path="/explorer" element={<ExplorerPlaceholder />} />
         <Route path="/analytics" element={<AnalyticsPlaceholder />} />
-        <Route path="/profile" element={<ProfilePlaceholder />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsersPlaceholder /></AdminRoute>} />
       </Route>
     </Routes>
