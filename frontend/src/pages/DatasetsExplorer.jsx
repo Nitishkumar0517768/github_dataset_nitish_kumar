@@ -1,23 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDatasets, setPage, setLimit } from '../store/datasetSlice';
+import { fetchDatasets, setPage, setLimit, setSearchQuery, setSort } from '../store/datasetSlice';
 import DatasetTableRow from '../components/DatasetTableRow';
 import DatasetDetailModal from '../components/DatasetDetailModal';
 import FilterSidebar from '../components/FilterSidebar';
-import { ChevronLeft, ChevronRight, HelpCircle, Layers, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, HelpCircle, Layers, RefreshCw, Search, ArrowUpDown } from 'lucide-react';
 import { showNotification } from '../store/uiSlice';
 
 const DatasetsExplorer = () => {
   const dispatch = useDispatch();
-  const { items, loading, error, page, limit, totalResults } = useSelector((state) => state.datasets);
+  const { items, loading, error, page, limit, totalResults, sort, searchQuery, filters } = useSelector((state) => state.datasets);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedDataset, setSelectedDataset] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState(searchQuery);
 
-  // Fetch datasets when page or limit changes
+  // Synchronize local search input with store search query (e.g. on filter clear)
+  useEffect(() => {
+    setSearchVal(searchQuery);
+  }, [searchQuery]);
+
+  // Debounced search query dispatcher
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchVal !== searchQuery) {
+        dispatch(setSearchQuery(searchVal));
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchVal, searchQuery, dispatch]);
+
+  // Fetch datasets when query state dependencies change
   useEffect(() => {
     dispatch(fetchDatasets());
-  }, [dispatch, page, limit]);
+  }, [
+    dispatch,
+    page,
+    limit,
+    sort,
+    searchQuery,
+    filters.type,
+    filters.repo,
+    filters.source,
+    filters.docType,
+    filters.language,
+    filters.framework,
+    filters.category
+  ]);
 
   // Handle page changes
   const handlePageChange = (newPage) => {
@@ -30,6 +60,11 @@ const DatasetsExplorer = () => {
   // Handle items limit change
   const handleLimitChange = (e) => {
     dispatch(setLimit(Number(e.target.value)));
+  };
+
+  // Handle sorting option change
+  const handleSortChange = (e) => {
+    dispatch(setSort(e.target.value));
   };
 
   // Select/Deselect individual rows
@@ -103,6 +138,52 @@ const DatasetsExplorer = () => {
         {/* Right Side: Main Table Grid */}
         <div className="flex-1 bg-white dark:bg-dark-card border border-slate-200/60 dark:border-dark-border/60 rounded-3xl shadow-sm overflow-hidden flex flex-col justify-between">
           
+          {/* Search and Sort Control Bar */}
+          <div className="p-4 border-b border-slate-100 dark:border-dark-border/40 bg-slate-50/20 dark:bg-slate-800/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+            
+            {/* Search Input */}
+            <div className="relative w-full sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search instructions, repository, code..."
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                className="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-dark-border rounded-xl text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all placeholder-slate-400 dark:placeholder-slate-500"
+              />
+              {searchVal && (
+                <button 
+                  onClick={() => setSearchVal('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Sort Select */}
+            <div className="flex items-center gap-2 text-xs font-semibold w-full sm:w-auto justify-end">
+              <span className="text-slate-400 flex items-center gap-1">
+                <ArrowUpDown className="w-3.5 h-3.5" /> Sort by:
+              </span>
+              <select
+                value={sort}
+                onChange={handleSortChange}
+                className="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-dark-border rounded-xl outline-none text-slate-700 dark:text-slate-300 focus:border-brand-500 transition-colors cursor-pointer"
+              >
+                <option value="">Default (ID Ascending)</option>
+                <option value="-id">ID (Descending)</option>
+                <option value="repo">Repo Name (A-Z)</option>
+                <option value="-repo">Repo Name (Z-A)</option>
+                <option value="type">Type (A-Z)</option>
+                <option value="-type">Type (Z-A)</option>
+                <option value="language">File Path (A-Z)</option>
+                <option value="-language">File Path (Z-A)</option>
+              </select>
+            </div>
+
+          </div>
+
           {/* Table Container */}
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

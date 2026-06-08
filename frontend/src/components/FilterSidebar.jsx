@@ -10,13 +10,11 @@ const FilterSidebar = () => {
   // Handle dropdown value changes
   const handleFilterChange = (name, value) => {
     dispatch(setFilter({ [name]: value }));
-    dispatch(fetchDatasets());
   };
 
   // Handle clearing all filters
   const handleClearAll = () => {
     dispatch(resetFilters());
-    dispatch(fetchDatasets());
   };
 
   // Filter dropdown configurations
