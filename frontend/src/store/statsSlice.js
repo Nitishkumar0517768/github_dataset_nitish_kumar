@@ -39,8 +39,21 @@ export const fetchStatsSummary = createAsyncThunk(
   }
 );
 
+export const fetchAnalyticsData = createAsyncThunk(
+  'stats/fetchAnalyticsData',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/stats/datasets/analytics');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch analytics data');
+    }
+  }
+);
+
 const initialState = {
   summary: null,
+  analytics: null,
   loading: false,
   error: null,
 };
@@ -64,6 +77,18 @@ const statsSlice = createSlice({
         state.summary = action.payload;
       })
       .addCase(fetchStatsSummary.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchAnalyticsData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAnalyticsData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.analytics = action.payload;
+      })
+      .addCase(fetchAnalyticsData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
