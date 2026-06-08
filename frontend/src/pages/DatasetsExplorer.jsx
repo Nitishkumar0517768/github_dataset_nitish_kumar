@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchDatasets, setPage, setLimit, setSearchQuery, setSort, deleteDataset } from '../store/datasetSlice';
+import { fetchDatasets, setPage, setLimit, setSearchQuery, setSort, deleteDataset, restoreDataset } from '../store/datasetSlice';
 import DatasetTableRow from '../components/DatasetTableRow';
 import DatasetDetailModal from '../components/DatasetDetailModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
@@ -57,7 +57,8 @@ const DatasetsExplorer = () => {
     filters.docType,
     filters.language,
     filters.framework,
-    filters.category
+    filters.category,
+    filters.deleted
   ]);
 
   // Handle page changes
@@ -122,6 +123,18 @@ const DatasetsExplorer = () => {
           dispatch(showNotification({ message: err || 'Failed to delete dataset', type: 'error' }));
         });
     }
+  };
+
+  const handleRestoreRecord = (id) => {
+    dispatch(restoreDataset(id))
+      .unwrap()
+      .then(() => {
+        dispatch(showNotification({ message: 'Dataset restored successfully', type: 'success' }));
+        dispatch(fetchDatasets());
+      })
+      .catch((err) => {
+        dispatch(showNotification({ message: err || 'Failed to restore dataset', type: 'error' }));
+      });
   };
 
   const totalPages = Math.ceil(totalResults / limit) || 1;
@@ -290,6 +303,7 @@ const DatasetsExplorer = () => {
                       onView={handleViewDetail}
                       onEdit={handleEditRecord}
                       onDelete={handleDeleteRecord}
+                      onRestore={handleRestoreRecord}
                       isSelected={selectedIds.includes(dataset.id || dataset._id)}
                       onSelectToggle={handleSelectToggle}
                     />

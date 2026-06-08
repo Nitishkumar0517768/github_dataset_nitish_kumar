@@ -63,6 +63,7 @@ router.route('/admin/datasets')
 router.post('/protected/datasets', protect, datasetController.createDataset);
 router.patch('/protected/datasets/:id', protect, datasetController.updateDataset);
 router.delete('/protected/datasets/:id', protect, datasetController.deleteDataset);
+router.post('/protected/datasets/:id/restore', protect, restrictTo('admin'), datasetController.restoreDataset);
 
 // Bulk CRUD and check endpoints (placed before parameter routes to avoid collisions)
 router.post('/bulk-create', datasetController.bulkCreateDatasets);

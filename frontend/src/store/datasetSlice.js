@@ -76,6 +76,19 @@ export const deleteDataset = createAsyncThunk(
   }
 );
 
+export const restoreDataset = createAsyncThunk(
+  'datasets/restoreDataset',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/datasets/protected/datasets/${id}/restore`);
+      return { dataset: response.data.data, message: response.data.message };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to restore dataset');
+    }
+  }
+);
+
+
 const initialState = {
   items: [],
   loading: false,
@@ -96,7 +109,9 @@ const initialState = {
     language: '',
     framework: '',
     category: '',
+    deleted: '', // '' for active, 'true' for deleted, 'all' for all
   },
+
 };
 
 const datasetSlice = createSlice({
@@ -195,7 +210,25 @@ const datasetSlice = createSlice({
       .addCase(deleteDataset.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Restore Dataset
+      .addCase(restoreDataset.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(restoreDataset.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(item => item.id === action.payload.dataset.id || item._id === action.payload.dataset._id);
+        if (index !== -1) {
+          state.items[index] = action.payload.dataset;
+        }
+        state.successMessage = action.payload.message;
+      })
+      .addCase(restoreDataset.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+
   },
 });
 
