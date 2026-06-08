@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -15,6 +15,8 @@ import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import AdminUsers from './pages/AdminUsers';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import ToastContainer from './components/ToastContainer';
+import { showNotification } from './store/uiSlice';
 
 const ProfilePlaceholder = () => (
   <div className="flex-1 flex flex-col justify-center items-center py-12">
@@ -57,6 +59,7 @@ const AdminUsersPlaceholder = () => (
 );
 
 function App() {
+  const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.ui.darkMode);
 
   useEffect(() => {
@@ -68,25 +71,40 @@ function App() {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    const handleRateLimit = () => {
+      dispatch(showNotification({
+        message: 'Rate limit exceeded. Please wait a moment before trying again.',
+        type: 'warning'
+      }));
+    };
+
+    window.addEventListener('api-rate-limit', handleRateLimit);
+    return () => window.removeEventListener('api-rate-limit', handleRateLimit);
+  }, [dispatch]);
+
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      
-      {/* Dashboard Protected Layout Route */}
-      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route path="/dashboard" element={<StatsDashboard />} />
-        <Route path="/explorer" element={<DatasetsExplorer />} />
-        <Route path="/explorer/new" element={<DatasetForm />} />
-        <Route path="/explorer/:id/edit" element={<DatasetForm />} />
-        <Route path="/analytics" element={<AnalyticsDashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
-      </Route>
-    </Routes>
+    <>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
+        {/* Dashboard Protected Layout Route */}
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route path="/dashboard" element={<StatsDashboard />} />
+          <Route path="/explorer" element={<DatasetsExplorer />} />
+          <Route path="/explorer/new" element={<DatasetForm />} />
+          <Route path="/explorer/:id/edit" element={<DatasetForm />} />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

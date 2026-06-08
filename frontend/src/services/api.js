@@ -29,16 +29,23 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Clear expired credentials and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    if (error.response) {
+      if (error.response.status === 401) {
+        // Clear expired credentials and redirect to login
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Prevent infinite redirect loops if already on login/register page
+        const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+        const isPublicPath = publicPaths.some(path => window.location.pathname.startsWith(path));
+        if (!isPublicPath && window.location.pathname !== '/') {
+          window.location.href = '/login?expired=true';
+        }
+      }
       
-      // Prevent infinite redirect loops if already on login/register page
-      const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
-      const isPublicPath = publicPaths.some(path => window.location.pathname.startsWith(path));
-      if (!isPublicPath && window.location.pathname !== '/') {
-        window.location.href = '/login?expired=true';
+      if (error.response.status === 429) {
+        // Dispatch custom rate limit window event
+        window.dispatchEvent(new CustomEvent('api-rate-limit'));
       }
     }
     return Promise.reject(error);
