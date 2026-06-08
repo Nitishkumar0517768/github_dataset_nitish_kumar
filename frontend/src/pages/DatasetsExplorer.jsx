@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDatasets, setPage, setLimit } from '../store/datasetSlice';
 import DatasetTableRow from '../components/DatasetTableRow';
+import DatasetDetailModal from '../components/DatasetDetailModal';
 import { ChevronLeft, ChevronRight, HelpCircle, Layers, RefreshCw } from 'lucide-react';
 import { showNotification } from '../store/uiSlice';
 
@@ -9,6 +10,8 @@ const DatasetsExplorer = () => {
   const dispatch = useDispatch();
   const { items, loading, error, page, limit, totalResults } = useSelector((state) => state.datasets);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedDataset, setSelectedDataset] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   // Fetch datasets when page or limit changes
   useEffect(() => {
@@ -44,14 +47,9 @@ const DatasetsExplorer = () => {
     }
   };
 
-  // Placeholder actions for detail view, edit, delete (to be implemented in PR 9, 12, 13)
   const handleViewDetail = (dataset) => {
-    dispatch(
-      showNotification({
-        message: `Detail view drawer for record #${dataset.id || dataset._id} will be implemented in PR 9.`,
-        type: 'info',
-      })
-    );
+    setSelectedDataset(dataset);
+    setIsDetailOpen(true);
   };
 
   const handleEditRecord = (dataset) => {
@@ -297,6 +295,12 @@ const DatasetsExplorer = () => {
           </div>
         )}
       </div>
+      {/* Detail slide-over drawer modal */}
+      <DatasetDetailModal
+        dataset={selectedDataset}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+      />
     </div>
   );
 };
