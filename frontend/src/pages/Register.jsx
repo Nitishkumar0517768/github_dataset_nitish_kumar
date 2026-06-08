@@ -1,24 +1,30 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { User as UserIcon, Mail, Lock, Eye, EyeOff, ArrowLeft, Sun, Moon, Shield } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../store/uiSlice';
+import { register, clearError } from '../store/authSlice';
 
 const Register = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { darkMode } = useSelector((state) => state.ui);
+  const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Clear previous error on mount
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const from = location.state?.from?.pathname || '/dashboard';
 
   // Formik Configuration
   const formik = useFormik({
-    initialState: {
-      name: '',
-      email: '',
-      password: '',
-      role: 'user', // default role
-    },
     initialValues: {
       name: '',
       email: '',
@@ -40,8 +46,21 @@ const Register = () => {
         .required('Role is required'),
     }),
     onSubmit: (values) => {
-      console.log('Form submitted with values:', values);
-      alert('PR 4 UI validation successful! Connection to Redux signup actions will be wired in PR 5.');
+      dispatch(
+        register({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          navigate(from, { replace: true });
+        })
+        .catch((err) => {
+          console.error('Registration action rejected:', err);
+        });
     },
   });
 
@@ -104,6 +123,12 @@ const Register = () => {
               <h3 className="font-heading text-2xl font-bold mb-2">Create Account</h3>
               <p className="text-slate-400 dark:text-slate-500 text-sm">Get access to the dataset dashboard</p>
             </div>
+
+            {error && (
+              <div className="mb-4 p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs font-semibold">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={formik.handleSubmit} className="space-y-5">
               
@@ -222,9 +247,17 @@ const Register = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition-all cursor-pointer mt-4"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition-all cursor-pointer mt-4 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign Up
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white" />
+                    Signing Up...
+                  </div>
+                ) : (
+                  'Sign Up'
+                )}
               </button>
 
             </form>

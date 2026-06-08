@@ -5,6 +5,8 @@ import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 const ProfilePlaceholder = () => (
   <div className="flex-1 flex flex-col justify-center items-center py-12">
@@ -65,12 +67,12 @@ function App() {
       <Route path="/register" element={<Register />} />
       
       {/* Dashboard Protected Layout Route */}
-      <Route element={<Layout />}>
+      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPlaceholder />} />
         <Route path="/explorer" element={<ExplorerPlaceholder />} />
         <Route path="/analytics" element={<AnalyticsPlaceholder />} />
         <Route path="/profile" element={<ProfilePlaceholder />} />
-        <Route path="/admin/users" element={<AdminUsersPlaceholder />} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsersPlaceholder /></AdminRoute>} />
       </Route>
     </Routes>
   );
