@@ -3,7 +3,15 @@
  * Converts Express query parameters into Mongoose/MongoDB query filters.
  */
 const buildFilters = (queryParams) => {
-  const query = { isDeleted: { $ne: true } };
+  const query = {};
+
+  if (queryParams.isDeleted === 'true' || queryParams.deleted === 'true') {
+    query.isDeleted = true;
+  } else if (queryParams.isDeleted === 'all' || queryParams.deleted === 'all') {
+    // Show all records (deleted + active)
+  } else {
+    query.isDeleted = { $ne: true };
+  }
 
   // 1. Direct Metadata Mappings
   if (queryParams.type) {

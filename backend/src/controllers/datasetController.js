@@ -684,6 +684,27 @@ exports.headDatasetsByRepo = catchAsync(async (req, res, next) => {
   res.status(200).end();
 });
 
+// POST Restore dataset
+exports.restoreDataset = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  let dataset;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    dataset = await Dataset.findOne({ _id: id });
+  } else {
+    dataset = await Dataset.findOne({ id: id });
+  }
+
+  if (!dataset) {
+    return next(new AppError(`No dataset found with ID: ${id}`, 404));
+  }
+
+  dataset.isDeleted = false;
+  await dataset.save();
+
+  sendSuccess(res, 200, dataset, 'Dataset restored successfully');
+});
+
 // OPTIONS /datasets
 exports.optionsDatasets = (req, res) => {
   res.setHeader('Allow', 'GET, POST, HEAD, OPTIONS');
@@ -701,6 +722,7 @@ exports.optionsHelper = (allowedMethods) => (req, res) => {
   res.setHeader('Allow', allowedMethods.join(', '));
   res.status(204).end();
 };
+
 
 
 

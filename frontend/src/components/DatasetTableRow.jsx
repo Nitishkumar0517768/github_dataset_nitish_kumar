@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Edit2, Trash2, ExternalLink } from 'lucide-react';
+import { Eye, Edit2, Trash2, ExternalLink, RotateCcw } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 const GithubIcon = ({ className = "w-3.5 h-3.5" }) => (
@@ -18,7 +18,7 @@ const GithubIcon = ({ className = "w-3.5 h-3.5" }) => (
 );
 
 
-const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSelectToggle }) => {
+const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, onRestore, isSelected, onSelectToggle }) => {
   const { user } = useSelector((state) => state.auth);
   
   // Safe extraction of nested metadata fields
@@ -28,6 +28,7 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSele
   const repoName = dataset.metadata?.repo_name || 'unknown';
   const filePath = dataset.metadata?.file_path || '';
   const url = dataset.metadata?.url || '';
+  const isDeleted = dataset.isDeleted === true;
 
   // Extract file extension or name for display
   const getFileDisplay = () => {
@@ -56,7 +57,7 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSele
   };
 
   return (
-    <tr className="border-b border-slate-200/60 dark:border-dark-border/60 hover:bg-slate-50/40 dark:hover:bg-slate-800/10 transition-colors group">
+    <tr className={`border-b border-slate-200/60 dark:border-dark-border/60 hover:bg-slate-50/40 dark:hover:bg-slate-800/10 transition-colors group ${isDeleted ? 'bg-slate-100/30 dark:bg-slate-950/10 opacity-60' : ''}`}>
       {/* Checkbox column */}
       <td className="px-6 py-4.5 align-middle">
         <input
@@ -83,7 +84,7 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSele
       <td className="px-6 py-4.5 align-middle">
         <div className="flex items-center gap-1.5 max-w-[200px]">
           <GithubIcon className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-          <span className="text-sm font-semibold truncate text-slate-700 dark:text-slate-300">
+          <span className={`text-sm font-semibold truncate ${isDeleted ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-300'}`}>
             {repoName}
           </span>
           {url && (
@@ -101,13 +102,13 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSele
       </td>
 
       {/* Target file location */}
-      <td className="px-6 py-4.5 align-middle font-mono text-xs text-slate-400 dark:text-slate-500 max-w-[140px] truncate" title={filePath}>
+      <td className={`px-6 py-4.5 align-middle font-mono text-xs max-w-[140px] truncate ${isDeleted ? 'line-through text-slate-400 dark:text-slate-600' : 'text-slate-400 dark:text-slate-500'}`} title={filePath}>
         {getFileDisplay()}
       </td>
 
       {/* Instruction preview snippet */}
       <td className="px-6 py-4.5 align-middle">
-        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-1 max-w-[320px]" title={instruction}>
+        <p className={`text-sm line-clamp-1 max-w-[320px] ${isDeleted ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-600 dark:text-slate-300'}`} title={instruction}>
           {instruction}
         </p>
       </td>
@@ -124,8 +125,19 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, isSelected, onSele
             <Eye className="w-4 h-4" />
           </button>
 
-          {/* Edit & Delete actions visible to logged in users */}
-          {user && (
+          {/* Restore action visible to admin users if deleted */}
+          {user && user.role === 'admin' && isDeleted && (
+            <button
+              onClick={() => onRestore && onRestore(id)}
+              className="p-1.5 bg-slate-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-emerald-700 dark:hover:text-emerald-300 rounded-lg transition-all border border-slate-200/40 dark:border-dark-border/40 cursor-pointer"
+              title="Restore record"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Edit & Delete actions visible to logged in users when NOT deleted */}
+          {user && !isDeleted && (
             <>
               <button
                 onClick={() => onEdit(dataset)}

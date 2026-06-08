@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, ExternalLink, Calendar, FileCode, Tag } from 'lucide-react';
+import { X, Copy, Check, ExternalLink, Calendar, FileCode, Tag, Trash2 } from 'lucide-react';
 
 const DatasetDetailModal = ({ dataset, isOpen, onClose }) => {
   const [copiedSection, setCopiedSection] = useState(null);
@@ -57,6 +57,11 @@ const DatasetDetailModal = ({ dataset, isOpen, onClose }) => {
               <span className="px-2 py-0.5 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 text-xs font-bold capitalize">
                 {metadata.type || 'unknown'}
               </span>
+              {dataset.isDeleted && (
+                <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs font-bold uppercase">
+                  Soft Deleted
+                </span>
+              )}
             </div>
             <h2 className="text-xl font-bold font-heading">Dataset Details</h2>
           </div>
@@ -70,6 +75,19 @@ const DatasetDetailModal = ({ dataset, isOpen, onClose }) => {
 
         {/* Scrollable Content Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {dataset.isDeleted && (
+            <div className="p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-2xl flex items-start gap-3 text-rose-800 dark:text-rose-300">
+              <div className="p-1.5 bg-rose-100 dark:bg-rose-900/50 rounded-lg text-rose-600 dark:text-rose-400">
+                <Trash2 className="w-4 h-4" />
+              </div>
+              <div className="space-y-1 text-sm">
+                <p className="font-bold">This dataset is soft-deleted</p>
+                <p className="text-xs text-rose-600/80 dark:text-rose-400/80">
+                  This record is currently in the trash. Active features/endpoints will not return it unless explicitly queried. Admins can restore it from the explorer row list.
+                </p>
+              </div>
+            </div>
+          )}
           
           {/* Metadata Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/20 p-4 rounded-2xl border border-slate-100 dark:border-dark-border/40">

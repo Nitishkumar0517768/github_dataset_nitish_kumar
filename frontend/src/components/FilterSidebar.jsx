@@ -20,6 +20,15 @@ const FilterSidebar = () => {
   // Filter dropdown configurations
   const filterSections = [
     {
+      label: 'Inventory Status',
+      name: 'deleted',
+      options: [
+        { label: 'Active Records', value: '' },
+        { label: 'Soft Deleted (Trash)', value: 'true' },
+        { label: 'Show All Records', value: 'all' },
+      ],
+    },
+    {
       label: 'Classification Type',
       name: 'type',
       options: [
