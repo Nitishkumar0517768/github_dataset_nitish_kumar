@@ -6,6 +6,7 @@ import DatasetTableRow from '../components/DatasetTableRow';
 import DatasetDetailModal from '../components/DatasetDetailModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import BulkUpdateModal from '../components/BulkUpdateModal';
+import ImportExportManager from '../components/ImportExportManager';
 import FilterSidebar from '../components/FilterSidebar';
 import { ChevronLeft, ChevronRight, HelpCircle, Layers, RefreshCw, Search, ArrowUpDown } from 'lucide-react';
 import { showNotification } from '../store/uiSlice';
@@ -29,6 +30,7 @@ const DatasetsExplorer = () => {
 
   // Bulk edit modal state
   const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
+  const [isImportExportOpen, setIsImportExportOpen] = useState(false);
 
   const [searchVal, setSearchVal] = useState(searchQuery);
 
@@ -226,12 +228,20 @@ const DatasetsExplorer = () => {
 
         <div className="flex items-center gap-3">
           {user && (
-            <button
-              onClick={() => navigate('/explorer/new')}
-              className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border border-brand-500 shadow-md shadow-brand-500/10"
-            >
-              Add Dataset
-            </button>
+            <>
+              <button
+                onClick={() => navigate('/explorer/new')}
+                className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border border-brand-500 shadow-md shadow-brand-500/10"
+              >
+                Add Dataset
+              </button>
+              <button
+                onClick={() => setIsImportExportOpen(true)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border border-slate-200 dark:border-dark-border shadow-sm"
+              >
+                Import / Export
+              </button>
+            </>
           )}
           <button
             onClick={() => dispatch(fetchDatasets())}
@@ -532,6 +542,17 @@ const DatasetsExplorer = () => {
         onConfirm={handleBulkUpdateConfirm}
         selectedCount={selectedIds.length}
         loading={loading}
+      />
+
+      {/* Import / Export Manager Modal */}
+      <ImportExportManager
+        isOpen={isImportExportOpen}
+        onClose={() => setIsImportExportOpen(false)}
+        onImportSuccess={(msg) => {
+          setIsImportExportOpen(false);
+          dispatch(showNotification({ message: msg, type: 'success' }));
+          dispatch(fetchDatasets());
+        }}
       />
 
       {/* Floating Bulk Actions Control Panel Bar */}
