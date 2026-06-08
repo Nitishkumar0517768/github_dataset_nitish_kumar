@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import StatsDashboard from './pages/StatsDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -73,7 +74,7 @@ function App() {
       
       {/* Dashboard Protected Layout Route */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route path="/dashboard" element={<DashboardPlaceholder />} />
+        <Route path="/dashboard" element={<StatsDashboard />} />
         <Route path="/explorer" element={<ExplorerPlaceholder />} />
         <Route path="/analytics" element={<AnalyticsPlaceholder />} />
         <Route path="/profile" element={<Profile />} />
