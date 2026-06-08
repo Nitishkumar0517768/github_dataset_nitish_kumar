@@ -27,5 +27,6 @@ router.get('/datasets/languages', statsController.getLanguagesCount);
 router.get('/datasets/frameworks', statsController.getFrameworksCount);
 router.get('/datasets/github', statsController.getGithubCount);
 router.get('/datasets/ai', statsController.getAICount);
+router.get('/datasets/analytics', statsController.getAnalyticsData);
 
 module.exports = router;

@@ -111,3 +111,58 @@ exports.getAICount = catchAsync(async (req, res, next) => {
   });
   sendStat(res, count, 'AI specific Datasets');
 });
+
+// 11. GET Advanced Analytics Data
+exports.getAnalyticsData = catchAsync(async (req, res, next) => {
+  // Group by metadata type
+  const typeStats = await Dataset.aggregate([
+    { $match: { isDeleted: { $ne: true } } },
+    { $group: { _id: '$metadata.type', count: { $sum: 1 } } },
+    { $project: { name: { $ifNull: ['$_id', 'unknown'] }, count: 1, _id: 0 } }
+  ]);
+
+  // Group by repo name (Top 6 repos)
+  const repoStats = await Dataset.aggregate([
+    { $match: { isDeleted: { $ne: true } } },
+    { $group: { _id: '$metadata.repo_name', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 6 },
+    { $project: { name: { $ifNull: ['$_id', 'unknown'] }, count: 1, _id: 0 } }
+  ]);
+
+  // Group by source type
+  const sourceStats = await Dataset.aggregate([
+    { $match: { isDeleted: { $ne: true } } },
+    { $group: { _id: '$metadata.source_type', count: { $sum: 1 } } },
+    { $project: { name: { $ifNull: ['$_id', 'unknown'] }, count: 1, _id: 0 } }
+  ]);
+
+  // Group by language (derived from file extension)
+  const allFiles = await Dataset.find({ isDeleted: { $ne: true } }, 'metadata.file_path');
+  const langCounts = {};
+  allFiles.forEach(doc => {
+    const filePath = doc.metadata?.file_path;
+    if (filePath) {
+      const idx = filePath.lastIndexOf('.');
+      const ext = idx !== -1 ? filePath.substring(idx + 1).toLowerCase() : 'txt';
+      langCounts[ext] = (langCounts[ext] || 0) + 1;
+    } else {
+      langCounts['unknown'] = (langCounts['unknown'] || 0) + 1;
+    }
+  });
+
+  const languageStats = Object.keys(langCounts).map(key => ({
+    name: key,
+    count: langCounts[key]
+  })).sort((a, b) => b.count - a.count).slice(0, 6);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      typeStats,
+      repoStats,
+      sourceStats,
+      languageStats
+    }
+  });
+});

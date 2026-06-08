@@ -11,6 +11,7 @@ import ResetPassword from './pages/ResetPassword';
 import StatsDashboard from './pages/StatsDashboard';
 import DatasetsExplorer from './pages/DatasetsExplorer';
 import DatasetForm from './pages/DatasetForm';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 
@@ -80,7 +81,7 @@ function App() {
         <Route path="/explorer" element={<DatasetsExplorer />} />
         <Route path="/explorer/new" element={<DatasetForm />} />
         <Route path="/explorer/:id/edit" element={<DatasetForm />} />
-        <Route path="/analytics" element={<AnalyticsPlaceholder />} />
+        <Route path="/analytics" element={<AnalyticsDashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsersPlaceholder /></AdminRoute>} />
       </Route>
