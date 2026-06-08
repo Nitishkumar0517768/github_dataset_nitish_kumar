@@ -3,6 +3,7 @@ import authReducer from './authSlice';
 import userReducer from './userSlice';
 import datasetReducer from './datasetSlice';
 import uiReducer from './uiSlice';
+import statsReducer from './statsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     users: userReducer,
     datasets: datasetReducer,
     ui: uiReducer,
+    stats: statsReducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
 });
