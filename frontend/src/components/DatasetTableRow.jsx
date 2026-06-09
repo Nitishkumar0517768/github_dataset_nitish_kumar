@@ -86,7 +86,7 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, onRestore, isSelec
         <div className="flex items-center gap-1.5 max-w-[200px]">
           <GithubIcon className="w-3.5 h-3.5 text-[#8B949E] flex-shrink-0" />
           <span 
-            onClick={() => navigate(`/explorer/${id}`)}
+            onClick={() => navigate(`/explorer/${encodeURIComponent(id)}`)}
             className={`text-xs font-semibold truncate hover:underline hover:text-[#58A6FF] cursor-pointer ${isDeleted ? 'line-through text-[#8B949E]' : 'text-[#c9d1d9]'}`}
           >
             {repoName}
@@ -123,7 +123,7 @@ const DatasetTableRow = ({ dataset, onView, onEdit, onDelete, onRestore, isSelec
         <div className="flex items-center justify-end gap-1.5">
           {/* View Details */}
           <button
-            onClick={() => navigate(`/explorer/${id}`)}
+            onClick={() => navigate(`/explorer/${encodeURIComponent(id)}`)}
             className="p-1 rounded bg-[#21262D] text-[#8B949E] hover:text-[#58A6FF] border border-[#30363D] hover:border-[#8b949e] transition-colors cursor-pointer"
             title="View details page"
           >

@@ -40,7 +40,7 @@ const DatasetForm = () => {
     if (isEditMode) {
       setFetching(true);
       setErrorState(null);
-      apiClient.get(`/datasets/${id}`)
+      apiClient.get(`/datasets/${encodeURIComponent(id)}`)
         .then((res) => {
           const data = res.data.data;
           setFormInitialValues({

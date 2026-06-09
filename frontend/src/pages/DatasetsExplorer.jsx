@@ -148,7 +148,7 @@ const DatasetsExplorer = () => {
   };
 
   const handleEditRecord = (dataset) => {
-    navigate(`/explorer/${dataset.id || dataset._id}/edit`);
+    navigate(`/explorer/${encodeURIComponent(dataset.id || dataset._id)}/edit`);
   };
 
   const handleDeleteRecord = (id) => {
@@ -481,7 +481,7 @@ const DatasetsExplorer = () => {
                   return (
                     <div
                       key={itemId}
-                      onClick={() => navigate(`/explorer/${itemId}`)}
+                      onClick={() => navigate(`/explorer/${encodeURIComponent(itemId)}`)}
                       className={`bg-[#21262D] border rounded-xl p-4.5 flex flex-col justify-between h-44 cursor-pointer hover:border-[#8b949e] hover:shadow-sm transition-all group relative ${
                         isSelected ? 'border-[#58A6FF]/40 bg-[#1f6feb]/5' : 'border-[#30363D]'
                       }`}
@@ -595,7 +595,7 @@ const DatasetsExplorer = () => {
                       <DatasetTableRow
                         key={dataset.id || dataset._id}
                         dataset={dataset}
-                        onView={() => navigate(`/explorer/${dataset.id || dataset._id}`)}
+                        onView={() => navigate(`/explorer/${encodeURIComponent(dataset.id || dataset._id)}`)}
                         onEdit={handleEditRecord}
                         onDelete={handleDeleteRecord}
                         onRestore={handleRestoreRecord}
