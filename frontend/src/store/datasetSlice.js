@@ -56,7 +56,7 @@ export const updateDataset = createAsyncThunk(
   'datasets/updateDataset',
   async ({ id, datasetData }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.patch(`/datasets/protected/datasets/${id}`, datasetData);
+      const response = await apiClient.patch(`/datasets/protected/datasets/${encodeURIComponent(id)}`, datasetData);
       return { dataset: response.data.data, message: response.data.message };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update dataset');
@@ -68,7 +68,7 @@ export const deleteDataset = createAsyncThunk(
   'datasets/deleteDataset',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.delete(`/datasets/protected/datasets/${id}`);
+      const response = await apiClient.delete(`/datasets/protected/datasets/${encodeURIComponent(id)}`);
       return { id, message: response.data.message };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete dataset');
@@ -80,7 +80,7 @@ export const restoreDataset = createAsyncThunk(
   'datasets/restoreDataset',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/datasets/protected/datasets/${id}/restore`);
+      const response = await apiClient.post(`/datasets/protected/datasets/${encodeURIComponent(id)}/restore`);
       return { dataset: response.data.data, message: response.data.message };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to restore dataset');

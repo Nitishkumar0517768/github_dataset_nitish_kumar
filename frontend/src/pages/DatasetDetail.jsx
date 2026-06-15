@@ -70,7 +70,7 @@ const DatasetDetail = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get(`/datasets/${id}`);
+      const response = await apiClient.get(`/datasets/${encodeURIComponent(id)}`);
       const data = response.data.data;
       setDataset(data);
       
@@ -681,8 +681,8 @@ const DatasetDetail = () => {
 
               <div className="flex flex-col gap-2">
                 <Link
-                  to={`/explorer/${id}/edit`}
-                  className="w-full py-2 bg-[#21262D] border border-[#30363D] hover:border-[#8B949E] hover:bg-[#30363D] text-[#F0F6FC] text-center text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  to={`/explorer/${encodeURIComponent(id)}/edit`}
+                  className="w-full py-2 bg-[#21262D] border border-[#30363D] hover:border-[#8b949e] hover:bg-[#30363D] text-[#F0F6FC] text-center text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>Edit Dataset Record</span>
