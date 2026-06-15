@@ -42,7 +42,7 @@ const LandingPage = () => {
             </svg>
           </div>
           <span className="font-heading font-bold text-xl tracking-tight bg-gradient-to-r from-brand-600 to-purple-500 dark:from-brand-400 dark:to-purple-300 bg-clip-text text-transparent">
-            GitData.io
+            Git Data
           </span>
         </Link>
 
@@ -246,7 +246,7 @@ const LandingPage = () => {
 
       {/* 4. Footer */}
       <footer className="py-8 px-6 border-t border-slate-200 dark:border-dark-border text-center text-sm text-slate-500 dark:text-slate-400 mt-auto bg-white dark:bg-dark-card/30">
-        <p>© 2026 GitData.io. All rights reserved. Created for Nitish Kumar Full Stack project.</p>
+        <p>© 2026 Git Data. All rights reserved. Created for Nitish Kumar Full Stack project.</p>
       </footer>
 
     </div>
