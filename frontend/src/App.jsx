@@ -18,7 +18,6 @@ import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import AdminUsers from './pages/AdminUsers';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
-import ToastContainer from './components/ToastContainer';
 import { showNotification } from './store/uiSlice';
 
 const ProfilePlaceholder = () => (
@@ -88,7 +87,6 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />

@@ -28,7 +28,7 @@ const Favorites = () => {
     setError(null);
     try {
       const requests = favIds.map(id => 
-        apiClient.get(`/datasets/${id}`)
+        apiClient.get(`/datasets/${encodeURIComponent(id)}`)
           .then(res => res.data.data)
           .catch(err => {
             console.error(`Failed to fetch details for favorite dataset ${id}:`, err);
@@ -178,7 +178,7 @@ const Favorites = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className="bg-[#21262D] border border-[#30363D] hover:border-[#8b949e] p-5 rounded-2xl flex flex-col justify-between h-48 transition-all hover:shadow-md group cursor-pointer relative"
-                  onClick={() => navigate(`/explorer/${datasetId}`)}
+                  onClick={() => navigate(`/explorer/${encodeURIComponent(datasetId)}`)}
                 >
                   <div className="space-y-2.5">
                     {/* Header */}
