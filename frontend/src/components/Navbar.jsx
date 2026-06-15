@@ -86,7 +86,7 @@ const Navbar = () => {
 
         <Link to="/" className="flex items-center gap-2 mr-4">
           <span className="font-semibold text-sm tracking-tight text-[#F0F6FC] hover:text-[#58A6FF] transition-all font-mono select-none hidden sm:inline-block">
-            GitData.io
+            Git Data
           </span>
         </Link>
 

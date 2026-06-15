@@ -78,7 +78,7 @@ const Login = () => {
             <GithubLogo className="w-12 h-12 mx-auto" />
           </Link>
           <h2 className="text-2xl font-light tracking-tight text-[#F0F6FC] font-sans">
-            Sign in to GitData.io
+            Sign in to Git Data
           </h2>
         </div>
 
@@ -175,7 +175,7 @@ const Login = () => {
 
         {/* Footer info links card */}
         <div className="border border-[#30363D] p-4 rounded-lg text-center text-xs text-[#8B949E] bg-transparent">
-          New to GitData.io?{' '}
+          New to Git Data?{' '}
           <Link 
             to="/register" 
             className="text-[#58A6FF] hover:underline font-semibold"

@@ -77,7 +77,7 @@ const Sidebar = () => {
             <GithubLogo className="w-6 h-6 flex-shrink-0" />
             {!sidebarCollapsed && (
               <span className="font-bold text-sm tracking-tight font-mono select-none">
-                GitData explorer
+                Git Data Explorer
               </span>
             )}
           </Link>
