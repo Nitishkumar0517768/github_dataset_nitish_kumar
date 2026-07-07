@@ -1,466 +1,816 @@
-#  Git Data — GitHub Dataset Explorer (MERN) Platform
+# ⚡ GitHub Dataset Explorer & Manager
 
-[![Backend Status](https://img.shields.io/badge/Backend_Status-Online-emerald?style=flat-square&logo=node.js)](https://github-dataset-nitish-kumaar.onrender.com/api/v1/system/health)
-[![Database Version](https://img.shields.io/badge/Database_Version-MongoDB_v6.0-blue?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
-
-Git Data is a high-performance, enterprise-grade codebase and instruction dataset management platform. It ingests, parses, indexes, aggregates, and visualizes codebase and instruction datasets (like GitHub repositories, Python code elements, documentation, and markdown files) for machine learning and AI training. The backend architecture leverages Node.js, Express, MongoDB, and Mongoose with heavily optimized aggregation pipelines and customized security middlewares.
+An enterprise-ready, high-performance full-stack web application and REST API designed to index, query, search, and analyze over **115,011 GitHub repository records**. Features live charts, multi-dimensional filters, bulk transactions, secure token authentication, and robust rate-limiting.
 
 ---
 
-## 🌐 What is the GitHub Dataset (Git Data)?
-The GitHub Dataset is a comprehensive repository of standardized programming elements, codebase documentations, and instruction-tuning pairs extracted from public repositories. Maintainers and AI developers use this data to train code generation models, analyze code structures, and inspect public source patterns.
-
-Every entry in the database represents a dataset document containing instructions, optional inputs, and detailed outputs, combined with a rich metadata object specifying:
-- **Repository information** (e.g., repository name, source URL, source type)
-- **Code structures** (e.g., whether it is a function, class, class implementation, or docstring)
-- **File extensions and formats** (e.g., `.py`, `.md`, `.rst` file types)
-- **Language tags** and classification markers.
-
-Git Data directly exposes a REST API with advanced dynamic filters, full-text search index lookups, and specialized analytics to inspect these structures instantly.
-
-**Why this matters**: As large language models (LLMs) continue to dominate software development workflows, having structured datasets for training, evaluation, and fine-tuning is vital. Git Data brings raw programming and instruction datasets to life through a beautiful REST API with search, statistics, and role-based access control.
+## 🔗 Live Deployments & Documentation
+* 🖥️ **Live Frontend Application**: [github-dataset-nitish-kumar.vercel.app](https://github-dataset-nitish-kumar.vercel.app/)
+* 🚀 **Live Backend REST API**: [github-dataset-nitish-kumaar.onrender.com/api/v1](https://github-dataset-nitish-kumaar.onrender.com/api/v1)
+* 📬 **Interactive Postman Workspace API Documentation**: [Postman Collection](https://documenter.getpostman.com/view/50841011/2sBXwtqpfD)
 
 ---
 
-## ⚡ Key Highlights & Core Features
-- **⚡ High-Speed Dataset Exploration**: Seamless listing, paginated browsing, and custom sorting on datasets, supporting multiple filter parameters at once.
-- **🧩 Smart Data Transform & Schema**: The schema ([dataset.js](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/models/dataset.js)) flattens complex nested structures into clear, indexed fields. It uses compound indexes on repository name + type and full-text indexes for search optimization.
-- **📊 Robust Analytics & KPIs**: Heavy MongoDB aggregation pipelines compute data type counts, top repositories, programming languages, and framework usage (e.g., PyTorch, TensorFlow).
-- **🔒 Stateless Multi-Role JWT Security**: Implements JWT access and refresh token flows, allowing secure sessions, token revocation, profile updates, and role guards (User, Admin).
-- **🚦 Intelligent Rate-Limiting**: Fine-grained rate limiters ([rateLimiter.js](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/middlewares/rateLimiter.js)) apply appropriate thresholds to protect auth, search, stats, and import/export routes.
-- **📋 CSV/JSON Data Importer & Exporter**: Support for exporting collections to CSV files and importing raw JSON dataset documents in bulk.
+## 1. Hero Section
+
+<div align="center">
+  <h1>📊 GitHub Dataset Platform</h1>
+  <p><strong>A Production-Grade Full-Stack Portal for Large-Scale Repository Analytics</strong></p>
+
+  [![Vercel Deployment](https://img.shields.io/badge/Frontend-Vercel-success?style=for-the-badge&logo=vercel)](https://github-dataset-nitish-kumar.vercel.app/)
+  [![Render API Status](https://img.shields.io/badge/Backend-Render-blue?style=for-the-badge&logo=render)](https://github-dataset-nitish-kumaar.onrender.com/api/v1)
+  [![API Docs](https://img.shields.io/badge/API-Postman-FF6C37?style=for-the-badge&logo=postman)](https://documenter.getpostman.com/view/50841011/2sBXwtqpfD)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  <br />
+  [![Node.js](https://img.shields.io/badge/Node.js-v18+-green?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/)
+  [![Express](https://img.shields.io/badge/Express-v4-lightgrey?style=for-the-badge&logo=express)](https://expressjs.com/)
+  [![MongoDB](https://img.shields.io/badge/MongoDB-Cluster-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
+  [![React](https://img.shields.io/badge/React-v19-blue?style=for-the-badge&logo=react)](https://react.dev/)
+  [![Tailwind](https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+  [![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/)
+</div>
 
 ---
 
-## 🏗️ Backend System Architecture
-The backend follows a modular Model-View-Controller (MVC) pattern optimized for high-throughput API routing:
-1. **Routing Layer**: Exposes resource endpoints under API versioning (`/api/v1`). Employs CORS policy and pathway rate-limiters.
-2. **Security & Middleware Layer**: Intercepts requests to validate JWT access tokens, verify roles (Admin vs. User), and capture validation anomalies via Express validator middlewares.
-3. **Controller Layer**: Encapsulates business logic, including pagination utilities and dynamic filter parsing.
-4. **Data Access Layer (Mongoose)**: Manages MongoDB interaction with compound and text indexing on the `datasets` collection.
+## 2. Project Overview
+
+### 💡 What is GitHub Dataset?
+GitHub Dataset is a highly optimized full-stack administrative platform created to manage and analyze extensive codebase metadata. It indexes more than **115,000 repository entries**, exposing their frameworks, languages, code elements, document classifications, and source attributes. 
+
+### 🎯 Why It Exists
+Analyzing massive datasets of repository features is historically compute-heavy and difficult to filter dynamically. Relational databases degrade under unstructured, deeply nested JSON document structures. This project serves as a reference architecture for:
+1. Moving unstructured developer datasets into a highly performant, index-friendly **NoSQL Document Store**.
+2. Providing a clean, interactive administrative panel that facilitates rapid search, stats auditing, bulk edits, and data visualization.
+
+### ⚠️ The Problem It Solves
+- **DDoS Vulnerability**: Protects database aggregation metrics using specialized route rate limiters.
+- **Search Latency**: Speeds up database queries across 115k+ records from seconds to milliseconds using compound index configurations.
+- **Data Integrity**: Deploys soft-deletion logic ensuring historical data remains intact, allowing admin-only restorations.
+- **Boilerplate Reduction**: Simplifies Express handlers using reusable promise wrappers and global validation middleware.
 
 ---
 
-## 📂 Codebase File Structure
+## 3. Features Matrix
+
+| Feature | Status | Description |
+| :--- | :---: | :--- |
+| **🛡️ Token Authentication** | ✔️ | Secure stateless JWT auth, featuring email OTP reset flows. |
+| **🔄 CRUD Operations** | ✔️ | Full CRUD operations for datasets, including safe soft-deletes. |
+| **📦 Bulk Operations** | ✔️ | Admin ability to batch edit, soft-delete, restore, or purge rows. |
+| **📑 Pagination & Sorting** | ✔️ | High-performance cursor pagination with multi-field database sorting. |
+| **🔍 Case-Insensitive Search** | ✔️ | Real-time debounced regex searching matching repositories. |
+| **🗃️ Compound Filtering** | ✔️ | Multi-category filters (languages, frameworks, doc-types, sources). |
+| **📈 Dynamic Visualizations** | ✔️ | Dynamic bar, donut, and distribution graphs driven by Recharts. |
+| **📤 Data Import/Export** | ✔️ | Drag-and-drop JSON file loader + automated CSV export streamer. |
+| **🚦 Advanced Rate Limiting** | ✔️ | Segregated limits protecting Auth, Search, File Uploads, and Queries. |
+| **📱 Responsive Shell** | ✔️ | Sleek glassmorphism theme, collapsible sidebar, and full dark-mode. |
+
+---
+
+## 4. Tech Stack
+
+<table width="100%">
+  <tr>
+    <td width="50%" valign="top">
+      <h4>🎨 Frontend</h4>
+      <ul>
+        <li><strong>Vite 8 & React 19</strong>: Fast HMR bundling and UI render engine</li>
+        <li><strong>Redux Toolkit</strong>: Global state slices (Auth, UI, Datasets, Stats)</li>
+        <li><strong>Tailwind CSS v4</strong>: Modern utility styles and custom dark-theme tokens</li>
+        <li><strong>Recharts</strong>: SVG-based responsive analytics charts</li>
+        <li><strong>Formik & Yup</strong>: Schema-based client form validations</li>
+        <li><strong>Axios</strong>: Network client with auto-attaching JWT interceptors</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h4>🚀 Backend & Database</h4>
+      <ul>
+        <li><strong>Node.js & Express.js</strong>: MVC routing core and middleware pipeline</li>
+        <li><strong>MongoDB Atlas</strong>: Scalable, hosted cloud NoSQL document database</li>
+        <li><strong>Mongoose</strong>: Schema validation, index declaration, and querying</li>
+        <li><strong>Bcrypt.js</strong>: Pre-save user password hashing hook</li>
+        <li><strong>JSON Web Tokens (JWT)</strong>: Stateless authorization signatures</li>
+        <li><strong>Express Rate Limit</strong>: Segregated endpoint protection</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 5. Architecture
+
+The application strictly implements the industry-standard **Model-View-Controller (MVC)** design pattern, keeping logic separated from presentation:
+
+```text
+       +-------------------------------------------------------------+
+       |                       React Client                          |
+       +-------------------------------------------------------------+
+                                      │ (Axios HTTPS request)
+                                      ▼
+       +-------------------------------------------------------------+
+       |                        Express API                          |
+       |  /api/v1/datasets                                           |
+       +-------------------------------------------------------------+
+                                      │
+                                      ▼
+       +-------------------------------------------------------------+
+       |                     Route Middlewares                       |
+       |  [Rate Limiter] ➔ [JWT Authorization] ➔ [Yup Validator]     |
+       +-------------------------------------------------------------+
+                                      │ (Valid Request Passes)
+                                      ▼
+       +-------------------------------------------------------------+
+       |                         Controller                          |
+       |  datasetController.js                                       |
+       +-------------------------------------------------------------+
+                                      │
+                                      ▼
+       +-------------------------------------------------------------+
+       |                  Services & Utils Layer                     |
+       |  [filterBuilder.js] ➔ [pagination.js]                       |
+       +-------------------------------------------------------------+
+                                      │
+                                      ▼
+       +-------------------------------------------------------------+
+       |                      Mongoose Models                        |
+       |  dataset.js (Compound Indexes Declared)                     |
+       +-------------------------------------------------------------+
+                                      │ (Query Execution)
+                                      ▼
+       +-------------------------------------------------------------+
+       |                       MongoDB Atlas                         |
+       |  Collection: datasets (115,011 records)                      |
+       +-------------------------------------------------------------+
 ```
-github-dataset-nitish-kumar/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── db.js                        # MongoDB Database Connection
-│   │   ├── controllers/
-│   │   │   ├── analyticsController.js       # Dataset Analysis & Aggregations
-│   │   │   ├── authController.js            # Login, Register, Profiles, Token Revocation
-│   │   │   ├── datasetController.js         # Dataset CRUD, Bulk Ops, Filters, CSV/JSON Export
-│   │   │   └── statsController.js           # KPI Builders & Count Metrics
-│   │   ├── middlewares/
-│   │   │   ├── authMiddleware.js            # JWT Validation & Role Guardians
-│   │   │   ├── errorMiddleware.js           # Global Express Error Handler
-│   │   │   └── rateLimiter.js               # Pathway Limit Controllers
-│   │   ├── models/
-│   │   │   ├── dataset.js                   # Flattened Dataset Model with Compound Indices
-│   │   │   └── user.js                      # User and Admin Identity Schema
-│   │   ├── routes/
-│   │   │   ├── analyticsRoutes.js           # Analytics Aggregation Routes
-│   │   │   ├── authRoutes.js                # Authentication, Profiles & User Management
-│   │   │   ├── datasetRoutes.js             # Dynamic CRUD, Bulk Ops, and Static Filter Paths
-│   │   │   ├── jwtRoutes.js                 # Token Telemetry Status & Protected JWT Routes
-│   │   │   ├── searchRoutes.js              # Specialized Search Binding
-│   │   │   └── statsRoutes.js               # High-Performance Count Routes
-│   │   ├── scripts/
-│   │   │   ├── test-connection.js           # Verification Script for DB Connection
-│   │   │   └── test-pr14.js                 # Automated API Route Test Runner
-│   │   ├── utils/
-│   │   │   ├── AppError.js                  # Standardized Application Error Object
-│   │   │   ├── catchAsync.js                # Async Express Handler Wrapper
-│   │   │   ├── filterBuilder.js             # Dynamic Search Query Builder
-│   │   │   └── pagination.js                # Centralized Pagination Calculator
-├── frontend/
-│   ├── dist/                                # Built static assets
-│   ├── src/
-│   │   ├── assets/                          # Static assets and images
-│   │   ├── components/                      # Premium UI Components (Navbar, Sidebar, Sidebar Filters)
-│   │   ├── hooks/                           # Custom React Hooks
-│   │   ├── pages/                           # Screen Pages (Explorer, Dashboards, Auth screens)
-│   │   ├── services/                        # API Service Clients (Axios setup)
-│   │   └── store/                           # Redux Slices (Auth, Datasets, Stats, UI)
-└── README.md                                # Comprehensive Platform Manual
+
+---
+
+## 6. Folder Structure
+
+Below is the repository directory map, indicating the separation of concerns:
+
+```text
+github_dataset_nitish_kumar/
+├── backend/                        # 🚀 Backend Monolith Project Root
+│   ├── src/                        # Codebase source directory
+│   │   ├── config/                 # Configurations layer
+│   │   │   └── db.js               # Mongoose MongoDB connection pool & listeners
+│   │   ├── controllers/            # Controller layer (handles request & response wrappers)
+│   │   │   ├── analyticsController.js # Aggregates languages, frameworks via MongoDB pipelines
+│   │   │   ├── authController.js   # Manages registration, logins, OTP resets & profiling
+│   │   │   ├── datasetController.js # Handles Paginated lists, CRUD operations, bulk actions
+│   │   │   └── statsController.js  # Runs ultra-fast O(1) collection size calculations
+│   │   ├── middlewares/            # Request Interceptors
+│   │   │   ├── authMiddleware.js   # JWT Bearer token validator & admin route guard
+│   │   │   ├── errorMiddleware.js  # Zentralized exception logger (CastErrors, duplicate indices)
+│   │   │   └── rateLimiter.js      # Endpoint security controls (limit auth, search, exports)
+│   │   ├── models/                 # Mongoose Database Schemas
+│   │   │   ├── dataset.js          # Dataset schema containing compound indexes & soft deletes
+│   │   │   └── user.js             # User schema with pre-save password-hashing hooks
+│   │   ├── routes/                 # Express API Endpoint declarations
+│   │   │   ├── analyticsRoutes.js  # Analytics chart aggregator paths
+│   │   │   ├── authRoutes.js       # Admin authentication & profile paths
+│   │   │   ├── datasetRoutes.js    # Dataset CRUD & bulk endpoints mapping
+│   │   │   ├── jwtRoutes.js        # JWT token verification and refresh utilities
+│   │   │   ├── searchRoutes.js     # Search endpoint paths
+│   │   │   └── statsRoutes.js      # Stats metadata counts paths
+│   │   ├── scripts/                # Helper scripts
+│   │   │   ├── test-connection.js  # Programmatic DB connector check
+│   │   │   └── test-pr14.js        # Endpoint testing suite
+│   │   ├── utils/                  # Reusable utility functions
+│   │   │   ├── AppError.js         # Unified operational error modeling class
+│   │   │   ├── catchAsync.js       # Higher-Order wrapper removing try-catch boilerplates
+│   │   │   ├── filterBuilder.js    # Regex dynamic builder mapping multiple inputs
+│   │   │   └── pagination.js       # Query paginator offset mapping
+│   │   └── server.js               # Express application bootsrapper & entry point
+│   ├── .env                        # Local environment credentials (ignored from VCS)
+│   ├── .env.example                # Sample environment template file
+│   └── package.json                # Project dependencies, scripts, and details
+│
+├── frontend/                       # 🎨 Vite & React Client Root
+│   ├── public/                     # Static media files & logo assets
+│   ├── src/                        # Frontend source codebase
+│   │   ├── components/             # Shared React components
+│   │   │   ├── Layout.jsx          # Protected route wrapper containing Navigation & Sidebars
+│   │   │   ├── Navbar.jsx          # Profile widget, dark-mode switch, and signouts
+│   │   │   ├── Sidebar.jsx         # Sidebar directory navigation links
+│   │   │   └── ProtectedRoute.jsx  # Auth shield protecting dashboard entries
+│   │   ├── pages/                  # Page view controllers
+│   │   │   ├── LandingPage.jsx     # Landing portal checking API health checks
+│   │   │   ├── Login.jsx           # Formik login portal
+│   │   │   ├── Register.jsx        # Account registrations
+│   │   │   ├── StatsDashboard.jsx  # Dashboards displaying DB summaries
+│   │   │   └── DatasetsExplorer.jsx # Main grid containing paging, search, filters & actions
+│   │   ├── services/               # Communications layer
+│   │   │   └── api.js              # Axios network client with authorization header attachers
+│   │   ├── store/                  # Redux Toolkit Global Store
+│   │   │   ├── authSlice.js        # Manages session tokens & current accounts
+│   │   │   ├── datasetSlice.js     # Manages Explorer query parameters & results
+│   │   │   ├── statsSlice.js       # Cache layer for dashboard summary stats
+│   │   │   └── uiSlice.js          # Handles notifications overlays & dark-mode settings
+│   │   ├── App.jsx                 # Routing index and route guards
+│   │   ├── main.jsx                # DOM mounting entrypoint
+│   │   └── index.css               # Styling rules & custom Tailwind theme definitions
+│   ├── eslint.config.js            # Frontend formatting configs
+│   ├── package.json                # Script runners & client modules
+│   └── vite.config.js              # Vite compiler config with API proxy settings
 ```
 
 ---
 
-## 🛠️ Environment Configuration (.env)
-Create a `.env` file inside the `backend/` directory based on the template below:
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/github_dataset_db
-JWT_SECRET=your_super_secret_jwt_key_2026
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_SECRET=your_super_secret_refresh_key_2026
-JWT_REFRESH_EXPIRES_IN=30d
-NODE_ENV=development
-RATE_LIMIT_WINDOW_MS=60000
-RATE_LIMIT_MAX=100
-API_VERSION=v1
-```
+## 7. Installation Guide
+
+Follow these steps to run the application locally on your system:
+
+### Prerequisites
+* **Node.js** (v18.0.0 or higher)
+* **npm** (v9.0.0 or higher)
+* **MongoDB Atlas account** (or local MongoDB database instance)
 
 ---
 
-## 🚀 Installation & Getting Started
-
-### 1. Prerequisites
-Ensure you have the following installed on your machine:
-- **Node.js** (v16+ recommended)
-- **MongoDB Community Server** (running on `localhost:27017`)
-
-### 2. Install Project Dependencies
-Navigate to the backend directory and install:
+### Step 1: Clone the Repository
 ```bash
-cd backend
-npm install
-```
-Navigate to the frontend directory and install:
-```bash
-cd ../frontend
-npm install
+git clone https://github.com/nitish-kumar/github_dataset_nitish_kumar.git
+cd github_dataset_nitish_kumar
 ```
 
-### 3. Bootstrap & Verify Connection
-To ensure your database connection is active and verify documents:
-```bash
-# Verify connection to MongoDB and query sample data
-node backend/src/scripts/test-connection.js
-```
-
-### 4. Running the Servers
-Start the backend development server (assuming a bootstrap loader or wrapper, or run test scripts directly):
-```bash
-# Run automated API route tests
-node backend/src/scripts/test-pr14.js
-```
-Start the frontend development server:
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-## 🧪 Comprehensive Postman Testing Guide
-The backend features distinct endpoints grouped into operational folders. You can import the preconfigured collection to perform automated testing:
-
-1. **Import Collection**:
-   - Open Postman.
-   - Drag and drop your pre-configured Postman JSON collection.
-2. **Auto-Authentication Setup**:
-   - The collection uses an environment script on the `/api/v1/auth/login` request.
-   - On a successful login, the bearer access token is automatically extracted and rotated into variables.
-   - Subsequent protected requests execute seamlessly.
+### Step 2: Configure the Backend Server
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install the node packages:
+   ```bash
+   npm install
+   ```
+3. Initialize your environment file:
+   ```bash
+   cp .env.example .env
+   ```
+4. Edit the `.env` file and insert your configuration parameters (see [Environment Variables](#8-environment-variables)).
+5. Launch the backend server in development mode:
+   ```bash
+   npm run dev
+   ```
+   *The console should output: `[Server] Running in development mode on port 5000`*
 
 ---
 
-## 📈 Endpoint Folders & Route Counts
-- **01 - Authentication**: Session login, register, profile fetching, profile updates, email verification, OTP sending, and password resetting.
-- **02 - Datasets (CRUD)**: Administrative creations, updates, soft-deletes, restorations, check endpoint, and bulk import/export.
-- **03 - Filter Routes**: Endpoints filtering datasets specifically by type (functions, classes, docs, readmes, python, frameworks, ML, AI).
-- **04 - Advanced Queries**: Random selectors, recent datasets, trending repos, and recommendation generators.
-- **05 - Statistics & Analytics**: Telemetry dashboard counts, framework distributions, language frequencies, and repository metrics.
-- **06 - Admin Panel**: Restricted user creations, system analytics dashboards, and bulk setups.
-- **07 - Token Management**: Token validations, refresh cycles, and revokes.
+### Step 3: Configure the Frontend Client
+1. Open a new terminal window in the root directory, then navigate to the frontend directory:
+   ```bash
+   cd ../frontend
+   ```
+2. Install client dependencies:
+   ```bash
+   npm install
+   ```
+3. Initialize the environment variable:
+   - Create a `.env` file in the `frontend` folder:
+     ```env
+     VITE_API_URL=http://localhost:5000/api/v1
+     ```
+4. Start the Vite hot-reloading development server:
+   ```bash
+   npm run dev
+   ```
+   *The client will start running locally at: `http://localhost:5173/`*
 
 ---
 
-## 🛡️ Developer Information & Repository Sync
-This codebase is managed using a structured, 30-PR bottom-up deployment plan ensuring a fully clean, compilable, and professional merge history on the main branch.
+## 8. Environment Variables
 
-- **Repository URL**: [github.com/ChittHirpara/national_vulnerability_database_hirpara_chitt_h](https://github.com/ChittHirpara/national_vulnerability_database_hirpara_chitt_h)
-- **Current Milestone**: Phase 5 (PRs 1 - 25 backend fully completed, tested, and pushed).
+### Backend Environment Variables
+Create a file named [backend/.env](file:///c:/Users/LOQ/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/.env) containing the following fields:
 
----
+| Key Name | Type | Recommended Value / Description | Required |
+| :--- | :---: | :--- | :---: |
+| **`PORT`** | Number | `5000` (Local server binding port) | Yes |
+| **`NODE_ENV`** | String | `development` or `production` | Yes |
+| **`MONGO_URI`** | String | MongoDB connection URI string including database credentials | Yes |
+| **`JWT_SECRET`** | String | Highly complex cryptographic string used to sign user tokens | Yes |
+| **`JWT_EXPIRES_IN`** | String | `90d` (Duration for which JWT token remains valid) | Yes |
+| **`JWT_COOKIE_EXPIRES_IN`** | Number | `90` (Duration for cookie expiration in days) | Yes |
 
-## 📑 Pagination Utility
-- **File**: [`backend/src/utils/pagination.js`](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/utils/pagination.js)
-- **Purpose**: Calculates request `skip` and `limit` values based on query parameters.
-- **Rules & Bounds**:
-  - The default page is `1`.
-  - The default limit is `10`.
-  - The maximum limit is capped at `100` to prevent payload overload.
-- **Where it is used**:
-  - GET `/api/v1/datasets` — Retrieves paginated datasets using MongoDB query constraints.
-  - GET `/api/v1/search/datasets` — Paginated search results.
+### Frontend Environment Variables
+Create a file named `frontend/.env` containing the following fields:
 
----
-
-## 🔐 JWT Authentication & Refresh Tokens
-- **Files**:
-  - Control Logic: [`backend/src/controllers/authController.js`](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/controllers/authController.js)
-  - Security Check: [`backend/src/middlewares/authMiddleware.js`](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/middlewares/authMiddleware.js)
-- **Token Design**:
-  - **Access Token**: Short-lived payload containing user identification and roles (Admin vs. User).
-  - **Refresh Token**: Long-lived credential used to request a new Access Token without logging out.
-- **Supported Operations**:
-  - `generateToken`: Issues new access/refresh tokens.
-  - `verifyToken`: Decodes and validates signature integrity.
-  - `refreshToken`: Renews token credentials.
-  - `revokeToken`: Blacklists refresh tokens on logout.
+| Key Name | Type | Recommended Value / Description | Required |
+| :--- | :---: | :--- | :---: |
+| **`VITE_API_URL`** | String | `http://localhost:5000/api/v1` (URL pointing to the running backend API) | Yes |
 
 ---
 
-## 📊 Sample Dataset Document (Excerpt)
+## 9. API Documentation
+
+Comprehensive and interactive API documentation including route query configurations, headers, and parameter definitions can be accessed at the live Postman workspace:
+
+👉 **[Postman API Documentation Workspace](https://documenter.getpostman.com/view/50841011/2sBXwtqpfD)**
+
+---
+
+## 10. API Routes
+
+All endpoints are versioned and prefixes map to `/api/v1`.
+
+### 🔐 Authentication & Session Routes
+| Method | Endpoint | Description | Access Level |
+| :--- | :--- | :--- | :---: |
+| **`POST`** | `/api/v1/auth/register` | Sign up a new user account | Public |
+| **`POST`** | `/api/v1/auth/login` | Login and obtain JWT session token | Public |
+| **`POST`** | `/api/v1/auth/logout` | End user session & revoke token | Private (User) |
+| **`GET`** | `/api/v1/auth/profile` | Read user profile information | Private (User) |
+| **`PATCH`** | `/api/v1/auth/profile` | Update profile information | Private (User) |
+| **`POST`** | `/api/v1/auth/forgot-password` | Request password recovery via OTP | Public |
+| **`POST`** | `/api/v1/auth/reset-password` | Reset password using verified OTP | Public |
+
+### 🗃️ Datasets CRUD & Collection Routes
+| Method | Endpoint | Description | Access Level |
+| :--- | :--- | :--- | :---: |
+| **`GET`** | `/api/v1/datasets` | Query all active datasets (supports filtering, search, and page paging) | Public |
+| **`GET`** | `/api/v1/datasets/:id` | Read a single dataset document matching ID | Public |
+| **`POST`** | `/api/v1/datasets` | Create a new dataset record | Private (User) |
+| **`PUT`** | `/api/v1/datasets/:id` | Replace all fields of a dataset | Private (User) |
+| **`PATCH`** | `/api/v1/datasets/:id` | Partially update attributes of a dataset | Private (User) |
+| **`DELETE`** | `/api/v1/datasets/:id` | Soft-delete dataset matching ID | Private (User) |
+| **`POST`** | `/api/v1/datasets/bulk-create` | Insert multiple dataset entries in one payload | Private (Admin) |
+| **`PATCH`** | `/api/v1/datasets/bulk-update` | Apply changes to multiple records | Private (Admin) |
+| **`DELETE`** | `/api/v1/datasets/bulk-delete` | Bulk soft-delete matching datasets | Private (Admin) |
+
+### 📊 Aggregations & Metrics Routes
+| Method | Endpoint | Description | Access Level |
+| :--- | :--- | :--- | :---: |
+| **`GET`** | `/api/v1/analytics/datasets/language-analysis` | Aggregate record frequencies per programming language | Public |
+| **`GET`** | `/api/v1/analytics/datasets/framework-analysis` | Aggregate record frequencies per framework | Public |
+| **`GET`** | `/api/v1/stats/datasets/count` | Check dataset counts (runs fast O(1) query count) | Public |
+
+---
+
+## 11. Sample Requests & Responses
+
+### 1️⃣ Create Dataset (POST Request)
+* **Endpoint**: `/api/v1/datasets`
+* **Headers**: `Authorization: Bearer <JWT_TOKEN>`
+
+#### Request Payload:
 ```json
 {
-  "_id": "648cf103fca91c3be895b9c0",
-  "id": "dataset-repo-0012",
-  "instruction": "Write a python function to compute the Fibonacci sequence recursively.",
-  "input": "n = 10",
-  "output": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)",
+  "instruction": "Explain the concept of decorators in Python.",
+  "input": "def my_decorator(func): pass",
+  "output": "Decorators are a tool in Python to wrap and alter functions dynamically.",
   "metadata": {
-    "type": "function_implementation",
+    "repo_name": "python/cpython",
+    "framework": "vanilla",
+    "programming_language": "python",
     "code_element": "function",
-    "repo_name": "pytorch-sequence-gen",
-    "file_path": "scripts/fibonacci.py",
     "source_type": "github_repository",
-    "doc_type": "python_source",
-    "is_readme": false,
-    "url": "https://github.com/example/pytorch-sequence-gen/blob/main/scripts/fibonacci.py",
-    "source": "github"
-  },
-  "isDeleted": false,
-  "createdAt": "2026-06-10T11:12:00.000Z",
-  "updatedAt": "2026-07-06T14:15:00.000Z"
+    "doc_type": "py"
+  }
+}
+```
+
+#### Response Body (`201 Created`):
+```json
+{
+  "success": true,
+  "message": "Dataset record created successfully",
+  "data": {
+    "_id": "603d2110c410be3df0a28f41",
+    "instruction": "Explain the concept of decorators in Python.",
+    "input": "def my_decorator(func): pass",
+    "output": "Decorators are a tool in Python to wrap and alter functions dynamically.",
+    "isDeleted": false,
+    "metadata": {
+      "repo_name": "python/cpython",
+      "framework": "vanilla",
+      "programming_language": "python",
+      "code_element": "function",
+      "source_type": "github_repository",
+      "doc_type": "py"
+    },
+    "createdAt": "2026-07-07T08:12:45.312Z",
+    "updatedAt": "2026-07-07T08:12:45.312Z"
+  }
 }
 ```
 
 ---
 
-## 🗂️ Raw Dataset Entry — Understanding Our Schema Data
-Each dataset document structured in MongoDB contains the following core fields:
-- **`id`**: Unique string-based dataset identifier (e.g., `dataset-repo-0012`). Used as the primary lookup index.
-- **`instruction`**: The prompt or directive indicating what code task is requested (indexed for text searches).
-- **`input`**: The optional contextual input or argument constraints (indexed for text searches).
-- **`output`**: The generated codebase solution, docstring, or output content (indexed for text searches).
-- **`metadata`**: Structured parameters describing the origin and syntax:
-  - `type`: Category of document (e.g., `function`, `class`, `documentation`, `readme`).
-  - `code_element`: Logical parsing classification (`function`, `class`).
-  - `repo_name`: Source GitHub repository label.
-  - `file_path`: Relative location in the source workspace.
-  - `source_type`: Origin source feed (`github_repository`).
-  - `doc_type`: Underlying format category (`python_source`, `markdown`).
-  - `is_readme`: Boolean identifying if the raw file is a README document.
-- **`isDeleted`**: Boolean indicator for soft-delete security.
+### 2️⃣ Update Dataset (PATCH Request)
+* **Endpoint**: `/api/v1/datasets/603d2110c410be3df0a28f41`
 
----
-
-## 🔄 How Our Controller Transforms / Filters This Data
-The backend dynamically builds filters using the utility [`backend/src/utils/filterBuilder.js`](file:///c:/Users/LOQ/OneDrive/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/backend/src/utils/filterBuilder.js):
-
-- Converts HTTP query parameters (`?repo=pytorch&type=function&is_readme=false`) into Mongoose queries.
-- Translates keyword searches into regular expressions and MongoDB `$or`/`$and` constructs.
-- Automatically strips `isDeleted: true` results, ensuring soft-deleted records do not bleed into standard endpoint results.
-
----
-
-## 📚 API Routes & Endpoints
-
-### Authentication `/api/v1/auth`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/register` | Register a new user profile | Public |
-| **POST** | `/login` | Authenticate and receive JWT access/refresh tokens | Public |
-| **POST** | `/logout` | Log out and invalidate refresh tokens | Public |
-| **POST** | `/forgot-password` | Send password reset token/link (stub) | Public |
-| **POST** | `/reset-password` | Reset password using generated token | Public |
-| **POST** | `/send-otp` | Send verification OTP code to user | Public |
-| **POST** | `/verify-email` | Verify email address using OTP code | Public |
-| **GET** | `/profile` | Get currently logged-in user profile | Protected |
-| **PATCH** | `/profile` | Update own user profile data | Protected |
-| **POST** | `/change-password` | Change user password | Protected |
-| **GET** | `/users` | Get all system users | Admin-Only |
-| **POST** | `/users` | Create user manually | Admin-Only |
-| **PATCH** | `/users/:id` | Update user data | Admin-Only |
-| **DELETE** | `/users/:id` | Delete user from system | Admin-Only |
-
-### JWT Telemetry `/api/v1/jwt`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/generate-token` | Generate a new access token payload | Public |
-| **POST** | `/verify-token` | Verify signature of an access token | Public |
-| **POST** | `/refresh-token` | Issue new access token using refresh token | Public |
-| **DELETE** | `/revoke-token` | Revoke/invalidate refresh token | Public |
-| **GET** | `/profile` | Retrieve profile associated with JWT token | Protected |
-| **GET** | `/dashboard` | Return token-guarded JWT telemetry status | Protected |
-| **GET** | `/private-datasets` | Return paginated list of datasets for token validation | Protected |
-| **GET** | `/private-analytics` | Return type distribution analytics | Protected |
-
-### Datasets `/api/v1/datasets`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/system/health` | Return API service health status | Public |
-| **GET** | `/` | Retrieve paginated list of datasets | Public |
-| **POST** | `/` | Create a single dataset entry | Public |
-| **GET** | `/random` | Fetch a random dataset document | Public |
-| **GET** | `/trending` | Retrieve list of trending datasets | Public |
-| **GET** | `/recent` | Fetch list of recently added datasets | Public |
-| **GET** | `/recommendations` | Get personalized dataset recommendations | Public |
-| **GET** | `/export/csv` | Export entire dataset collection to a CSV download | Public |
-| **POST** | `/import-json` | Upload and seed a JSON dataset file | Public |
-| **GET** | `/check/:id` | Check if a dataset ID exists | Public |
-| **GET** | `/admin/datasets` | Retrieve datasets (admin audit endpoint) | Admin-Only |
-| **POST** | `/protected/datasets` | Protected creation of a dataset | Protected |
-| **PATCH** | `/protected/datasets/:id` | Update dataset details | Protected |
-| **DELETE** | `/protected/datasets/:id` | Soft-delete a dataset | Protected |
-| **POST** | `/protected/datasets/:id/restore` | Restore soft-deleted dataset | Admin-Only |
-| **POST** | `/bulk-create` | Create multiple datasets at once | Public |
-| **PATCH** | `/bulk-update` | Update multiple datasets at once | Public |
-| **DELETE** | `/bulk-delete` | Delete multiple datasets at once | Public |
-| **POST** | `/bulk-restore` | Restore multiple deleted datasets | Admin-Only |
-| **GET** | `/readme` | Fetch README-based datasets | Public |
-| **GET** | `/functions` | Fetch function-based datasets | Public |
-| **GET** | `/classes` | Fetch class-based datasets | Public |
-| **GET** | `/documentation` | Fetch documentation-based datasets | Public |
-| **GET** | `/github` | Fetch GitHub origin datasets | Public |
-| **GET** | `/python` | Fetch Python programming language datasets | Public |
-| **GET** | `/ml` | Fetch Machine Learning datasets | Public |
-| **GET** | `/ai` | Fetch Artificial Intelligence datasets | Public |
-| **GET** | `/code-generation` | Fetch code-generation datasets | Public |
-| **GET** | `/docstrings` | Fetch docstring-based datasets | Public |
-| **GET** | `/filter/*` | Hardcoded routing filters matching above pathways | Public |
-| **GET** | `/sort/recent` | Specialized sorting by publication age | Public |
-
-### Search `/api/v1/search`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/datasets` | Full-text query keyword search across fields | Public |
-
-### Statistics `/api/v1/stats`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/datasets/count` | Total dataset count | Public |
-| **GET** | `/datasets/functions` | Count of function-based datasets | Public |
-| **GET** | `/datasets/classes` | Count of class-based datasets | Public |
-| **GET** | `/datasets/documentation` | Count of documentation datasets | Public |
-| **GET** | `/datasets/readme` | Count of README datasets | Public |
-| **GET** | `/datasets/repos` | Count of unique repository groups | Public |
-| **GET** | `/datasets/languages` | Count of unique programming languages | Public |
-| **GET** | `/datasets/frameworks` | Count of ML frameworks referenced | Public |
-| **GET** | `/datasets/github` | Count of GitHub source datasets | Public |
-| **GET** | `/datasets/ai` | Count of AI specific datasets | Public |
-| **GET** | `/datasets/analytics` | Merged counts and dashboard data objects | Public |
-
-### Analytics `/api/v1/analytics`
-| Method | Path | Description | Access |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/admin/analytics` | Administrative type analytics summary | Admin-Only |
-| **GET** | `/datasets/type-analysis` | Aggregate datasets by type category | Public |
-| **GET** | `/datasets/repo-analysis` | Aggregate counts grouped by repository name | Public |
-| **GET** | `/datasets/source-analysis` | Aggregate counts by source type (e.g. GitHub) | Public |
-| **GET** | `/datasets/framework-analysis` | PyTorch vs. TensorFlow distribution analysis | Public |
-| **GET** | `/datasets/language-analysis` | Language breakdown based on file extension | Public |
-| **GET** | `/datasets/code-analysis` | Functions vs. classes distribution ratio | Public |
-| **GET** | `/datasets/doc-analysis` | Detailed formats grouping analysis | Public |
-| **GET** | `/datasets/readme-analysis` | Proportion of README datasets vs. other code blocks | Public |
-| **GET** | `/datasets/ml-analysis` | Machine Learning repository analytics distribution | Public |
-| **GET** | `/datasets/ai-analysis` | AI repository analytics distribution | Public |
-
----
-
-## 🔬 MongoDB Aggregation Pipelines
-Git Data relies heavily on Mongoose aggregation stages to generate statistics and dashboards dynamically:
-
-### 1. Repository Analysis Distribution
-Groups all active (non-soft-deleted) documents by repository name to return the top 20 repositories:
-```javascript
-Dataset.aggregate([
-  { $match: { isDeleted: { $ne: true } } },
-  { $group: { _id: "$metadata.repo_name", count: { $sum: 1 } } },
-  { $sort: { count: -1 } },
-  { $limit: 20 }
-])
+#### Request Payload:
+```json
+{
+  "metadata": {
+    "framework": "flask"
+  }
+}
 ```
-*Used by: GET `/api/v1/analytics/datasets/repo-analysis`*
 
-### 2. Framework Distribution Pipeline
-Classifies repositories dynamically using `$regexMatch` to check for PyTorch vs. TensorFlow markers:
-```javascript
-Dataset.aggregate([
-  { $match: { isDeleted: { $ne: true } } },
-  {
-    $project: {
-      framework: {
-        $cond: {
-          if: { $regexMatch: { input: { $ifNull: ["$metadata.repo_name", ""] }, regex: /pytorch|torch/i } },
-          then: "PyTorch",
-          else: {
-            $cond: {
-              if: { $regexMatch: { input: { $ifNull: ["$metadata.repo_name", ""] }, regex: /tensorflow|keras/i } },
-              then: "TensorFlow",
-              else: "Other / General"
-            }
-          }
-        }
-      }
-    }
+#### Response Body (`200 OK`):
+```json
+{
+  "success": true,
+  "message": "Dataset updated successfully",
+  "data": {
+    "_id": "603d2110c410be3df0a28f41",
+    "instruction": "Explain the concept of decorators in Python.",
+    "input": "def my_decorator(func): pass",
+    "output": "Decorators are a tool in Python to wrap and alter functions dynamically.",
+    "isDeleted": false,
+    "metadata": {
+      "repo_name": "python/cpython",
+      "framework": "flask",
+      "programming_language": "python",
+      "code_element": "function",
+      "source_type": "github_repository",
+      "doc_type": "py"
+    },
+    "createdAt": "2026-07-07T08:12:45.312Z",
+    "updatedAt": "2026-07-07T08:14:10.045Z"
+  }
+}
+```
+
+---
+
+### 3️⃣ Delete Response (DELETE Request)
+* **Endpoint**: `/api/v1/datasets/603d2110c410be3df0a28f41`
+
+#### Response Body (`200 OK` - Soft Delete):
+```json
+{
+  "success": true,
+  "message": "Dataset record soft-deleted successfully",
+  "data": {
+    "_id": "603d2110c410be3df0a28f41",
+    "isDeleted": true,
+    "createdAt": "2026-07-07T08:12:45.312Z",
+    "updatedAt": "2026-07-07T08:15:30.112Z"
+  }
+}
+```
+
+---
+
+## 12. Sample MongoDB Document
+
+Below is a realistic document from the `githubDataSetDB.datasets` collection. Note that existing historical records lack the `isDeleted` key, necessitating dynamic query logic like `{ isDeleted: { $ne: true } }`:
+
+```json
+{
+  "_id": {
+    "$oid": "66487e4bc8120d3f2a58b6e2"
   },
-  { $group: { _id: "$framework", count: { $sum: 1 } } },
-  { $sort: { count: -1 } }
-])
-```
-*Used by: GET `/api/v1/analytics/datasets/framework-analysis`*
-
-### 3. File Language Classifier Pipeline
-Analyses file suffix extensions (`.py`, `.md`, `.rst`) from the metadata `file_path` to build distribution stats:
-```javascript
-Dataset.aggregate([
-  { $match: { isDeleted: { $ne: true } } },
-  {
-    $project: {
-      language: {
-        $cond: {
-          if: { $regexMatch: { input: { $ifNull: ["$metadata.file_path", ""] }, regex: /\.py$/i } },
-          then: "Python",
-          else: {
-            $cond: {
-              if: { $regexMatch: { input: { $ifNull: ["$metadata.file_path", ""] }, regex: /\.md$/i } },
-              then: "Markdown",
-              else: {
-                $cond: {
-                  if: { $regexMatch: { input: { $ifNull: ["$metadata.file_path", ""] }, regex: /\.rst$/i } },
-                  then: "ReStructuredText",
-                  else: "Plain Text / Other"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+  "instruction": "Implement a simple linear regression using PyTorch.",
+  "input": "import torch\nimport torch.nn as nn\n...",
+  "output": "class LinearRegression(nn.Module):\n    def __init__(self, input_dim, output_dim):\n...",
+  "metadata": {
+    "repo_name": "pytorch/pytorch",
+    "framework": "pytorch",
+    "programming_language": "python",
+    "code_element": "class",
+    "source_type": "github_repository",
+    "doc_type": "py"
   },
-  { $group: { _id: "$language", count: { $sum: 1 } } },
-  { $sort: { count: -1 } }
-])
+  "createdAt": "2026-05-18T10:20:11.411Z",
+  "updatedAt": "2026-05-18T10:20:11.411Z"
+}
 ```
-*Used by: GET `/api/v1/analytics/datasets/language-analysis`*
 
 ---
 
-## 📦 Dependency Overview
+## 13. Error Responses
 
-### Backend Dependencies
-- **`express`**: Routing and HTTP request pipeline handlers.
-- **`mongoose`**: Database schema declarations and aggregation query builders.
-- **`dotenv`**: Environment variable loading.
-- **`cors`**: Permitting Cross-Origin Resource Sharing.
-- **`bcryptjs`**: Password hashing.
-- **`jsonwebtoken`**: Generation and validation of auth JWT and refresh tokens.
-- **`express-rate-limit`**: DDoS mitigation rate limiters.
-- **`express-validator`**: Parameter parsing validations.
+Standardized API error responses are returned as structured JSON objects:
 
-### Frontend Dependencies
-- **`react`** & **`react-dom`**: Frontend SPA rendering logic.
-- **`react-redux`** & **`@reduxjs/toolkit`**: Unified Redux state stores.
-- **`react-router-dom`**: Multi-page route controller bindings.
-- **`framer-motion`**: Interactive animations.
-- **`lucide-react`**: Vector dashboard icon arrays.
-- **`recharts`**: Rendering data charts (pie charts, bar charts, trend lines).
-- **`axios`**: REST API integrations.
-- **`tailwindcss`**: Styled page designs.
+### 🔴 400 Bad Request
+Occurs when required schema validation variables are missing or incorrect:
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "Validation failed: instruction field is required"
+}
+```
+
+### 🔴 401 Unauthorized
+Returned when the JWT token is missing, expired, or signature verification fails:
+```json
+{
+  "success": false,
+  "statusCode": 401,
+  "error": "Unauthorized",
+  "message": "Access denied. Token has expired. Please log in again."
+}
+```
+
+### 🔴 403 Forbidden
+Returned when users lack sufficient administrator privileges to perform action (e.g. bulk-deleting):
+```json
+{
+  "success": false,
+  "statusCode": 403,
+  "error": "Forbidden",
+  "message": "You do not have administrative permissions to run this operation."
+}
+```
+
+### 🔴 404 Not Found
+Returned when searching for non-existent IDs:
+```json
+{
+  "success": false,
+  "statusCode": 404,
+  "error": "Not Found",
+  "message": "No dataset found with ID 603d2110c410be3df0a28f49"
+}
+```
+
+### 🔴 409 Conflict
+Returned when registering with an email address already bound to an active profile:
+```json
+{
+  "success": false,
+  "statusCode": 409,
+  "error": "Conflict",
+  "message": "A user with this email address already exists."
+}
+```
+
+### 🔴 500 Internal Server Error
+Returned when unexpected server operations or MongoDB cluster drops occur:
+```json
+{
+  "success": false,
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Database query timed out. Please try your request again later."
+}
+```
+
+---
+
+## 14. Screenshots Section
+
+<details>
+<summary>💻 Expand to view Application Mockup Layouts</summary>
+
+### 🖥️ Landing & Home Page
+```text
++-----------------------------------------------------------------------------------+
+| 🌟 GitHub Dataset Explorer   [Home]  [Dashboard]  [API Docs]        (🌙 Dark Mode) |
++-----------------------------------------------------------------------------------+
+|                                                                                   |
+|        🚀 Explore and Manage Over 115,000+ GitHub Codebase Records                |
+|               [ Access Dashboard ]      [ Read API Docs ]                         |
+|                                                                                   |
+|   📡 API System Status: [ HEALTHY ]  |  Uptime: 99.98%  |  DB Latency: 12ms        |
+|                                                                                   |
++-----------------------------------------------------------------------------------+
+```
+
+### 📊 Analytics & Stats Dashboard
+```text
++-----------------------------------------------------------------------------------+
+| 📊 DASHBOARD  |  Total Records: 115,011  |  Users: 1,412  |  Uptime: 2.1 days     |
++-----------------------------------------------------------------------------------+
+|  [ Languages Distribution ]              |  [ Top Repository Counts ]             |
+|   Python     [==================] 65%    |   pytorch/pytorch      [========] 31k   |
+|   Javascript [==========] 35%            |   huggingface/transf.. [======] 25k    |
+|   Go         [====] 12%                  |   python/cpython       [====] 15k      |
++-----------------------------------------------------------------------------------+
+```
+
+### 🔑 Login & OTP Forgot Password
+```text
++----------------------------------------+
+|             SECURE LOGIN               |
++----------------------------------------+
+|  Email:    [ admin@githubdataset.com ] |
+|  Password: [ ***************** ]       |
+|                                        |
+|         [ SIGN IN ]                    |
+|  [ Forgot Password? Reset via OTP ]    |
++----------------------------------------+
+```
+
+### 📱 Responsive Mobile Explorer View
+```text
++----------------------------+
+| 📊 GitHub Dataset    [===] |
++----------------------------+
+|  Search:                   |
+|  [ huggingface       ] [🔍] |
+|                            |
+|  +----------------------+  |
+|  | transformers/trainer |  |
+|  | Lang: Python  | P. 1 |  |
+|  +----------------------+  |
+|  | pytorch/linear_layer |  |
+|  | Lang: Python  | P. 2 |  |
+|  +----------------------+  |
+|                            |
+|   [ < Prev ]   [ Next > ]  |
++----------------------------+
+```
+</details>
+
+---
+
+## 15. Project Workflow
+
+The flow diagram below displays the lifecycle of an API request entering the Express framework and returning database results:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client App (Axios)
+    participant Rate as Rate Limiter Middleware
+    participant Auth as Auth Middleware (JWT)
+    participant Valid as Validation Middleware (Yup)
+    participant Controller as Controller Layer
+    participant DB as MongoDB Atlas Cluster
+
+    Client->>Rate: HTTP Request (GET/POST/PATCH)
+    alt Rate Limit Exceeded (HTTP 429)
+        Rate-->>Client: Return 429 Too Many Requests
+    else Allowed
+        Rate->>Auth: Forward Request
+    end
+
+    alt Authentication Fails (HTTP 401)
+        Auth-->>Client: Return 401 Unauthorized
+    else Token Authenticated
+        Auth->>Valid: Forward Request
+    end
+
+    alt Validation Schema Mismatch (HTTP 400)
+        Valid-->>Client: Return 400 Bad Request
+    else Schema Validated
+        Valid->>Controller: Call Handler
+    end
+
+    Controller->>DB: Execute Query (Index Match)
+    DB-->>Controller: Return Query Payload
+    Controller-->>Client: Return Standardized JSON (200/201 OK)
+```
+
+---
+
+## 16. Security Architecture
+
+### 🔑 Stateless Session JWT Authorization
+Restricts private routes utilizing the Bearer token authorization header format (`Authorization: Bearer <Token>`). Verifies cryptographic signatures, checks user records against active databases, and maps user privileges dynamically.
+
+### 🔒 Cryptographic Password Hashing
+User passwords are never stored as plain-text. They are hashed using `bcrypt` pre-save schema hooks inside the user model, utilizing a security salt factor of `12`.
+
+### 🛡️ Segregated API Rate Limiting
+To prevent brute-force attacks and resource exhaustion, different rate limits are applied:
+* **Authentication Routes**: 15 requests per 15 minutes.
+* **Search Engine Queries**: 20 requests per minute.
+* **File Uploads / JSON Imports**: 5 requests per 15 minutes.
+* **General API endpoints**: 60 requests per minute.
+
+### 🌐 Secure CORS Configurations
+Restricts API communications to verified domains, exposing response headers (like `X-Total-Count`) securely to client apps.
+
+---
+
+## 17. Performance & Optimization
+
+### ⚡ MongoDB Compound Query Indexing
+Ensures rapid queries across large volumes of documents by creating index matrices on high-lookup attributes:
+```javascript
+metadata: {
+  repo_name: { type: String, index: true },
+  programming_language: { type: String, index: true },
+  framework: { type: String, index: true }
+}
+```
+
+### 🚮 Fast Soft Delete Query Matching
+Calculates data queries utilizing `{ isDeleted: { $ne: true } }` filters, taking advantage of database indexes to bypass documents marked as soft-deleted.
+
+### 📑 Cursor Offset Pagination
+Divides large collections into segments using Mongoose `.skip()` and `.limit()` parameters, keeping JSON responses compact.
+
+### 📉 Client-Side Redux Caching
+Caches stats responses on the client side using Redux Slices, saving computing power by preventing duplicate server hits.
+
+---
+
+## 18. Future Improvements
+
+- [ ] **Docker Support**: Containerize application layers for unified deployment.
+- [ ] **Redis Caching**: Integrate Redis caching to save database hits on popular search strings.
+- [ ] **Elasticsearch Integration**: Deploy Elasticsearch for advanced typo-tolerant searches.
+- [ ] **Unit testing suites**: Expand unit test coverage to >80% using Jest and Supertest.
+- [ ] **GraphQL API**: Add GraphQL query capabilities to give clients full control over fields.
+- [ ] **WebSockets Integration**: Implement real-time dashboard statistic syncs.
+
+---
+
+## 19. Contributing
+
+We welcome contributions from open-source developers!
+
+### Contribution Rules
+1. **Fork** the repository and create your feature branch:
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+2. **Commit** your changes with descriptive messages:
+   ```bash
+   git commit -m "feat: Add Redis query caching for datasets explorer"
+   ```
+3. **Push** to the branch:
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+4. **Open a Pull Request** to the `main` branch. Ensure code meets ESLint rules and includes verification steps.
+
+---
+
+## 20. Running Tests
+
+Execute backend API and verification scripts from the backend root folder:
+
+### Run Connection Checks
+```bash
+cd backend
+npm run test:conn
+```
+
+### Run Endpoint Integration Suites
+```bash
+npm run test:pr14
+```
+
+---
+
+## 21. Deployment Guide
+
+### 🎨 Frontend Deployment (Vercel)
+1. Install Vercel CLI locally: `npm i -g vercel`
+2. Run configuration commands inside the `frontend` folder:
+   ```bash
+   cd frontend
+   vercel
+   ```
+3. Set the production environment variable on Vercel:
+   * **`VITE_API_URL`** = `https://github-dataset-nitish-kumaar.onrender.com/api/v1`
+
+### 🚀 Backend Deployment (Render)
+1. Create a new Web Service on Render linked to your repository.
+2. Configure settings inside the dashboard:
+   * **Build Command**: `cd backend && npm install`
+   * **Start Command**: `cd backend && node src/server.js`
+3. Map environment configurations inside Render:
+   * Define `MONGO_URI`, `JWT_SECRET`, `NODE_ENV=production`.
+
+---
+
+## 22. License
+
+This project is licensed under the terms of the **MIT License**. See the [LICENSE](file:///c:/Users/LOQ/Desktop/Full%20stack%20projects/github_dataset_nitish_kumar/LICENSE) file for more information.
+
+---
+
+## 23. Author
+
+**Nitish Kumar**
+
+* 🐙 **GitHub**: [github.com/nitish-kumar](https://github.com/nitish-kumar) (Placeholder)
+* 💼 **LinkedIn**: [linkedin.com/in/nitish-kumar](https://linkedin.com/in/nitish-kumar) (Placeholder)
+* 🌐 **Portfolio**: [nitishkumar.dev](https://nitishkumar.dev) (Placeholder)
+
+---
+
+## 24. Support & Bug Reports
+
+If you encounter any issues, feel free to report them:
+1. Open a bug ticket in the **[GitHub Issues](https://github.com/nitish-kumar/github_dataset_nitish_kumar/issues)** page.
+2. Describe your issue, outlining:
+   - Request payloads triggering errors.
+   - Response status codes and logs.
+   - Steps to reproduce.
+
+---
+
+## 25. Star History
+
+Show your support for this project by leaving a star! ⭐
+
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=nitish-kumar/github_dataset_nitish_kumar&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=nitish-kumar/github_dataset_nitish_kumar&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=nitish-kumar/github_dataset_nitish_kumar&type=Date" />
+  </picture>
+</div>
